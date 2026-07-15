@@ -18,7 +18,15 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 7px;
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tab-btn{padding:10px 20px;border-radius:9999px;border:1px solid var(--line);background:white;font-weight:600;cursor:pointer;font-size:14px}
 .tab-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
-@media(max-width:520px){.grid,.result{grid-template-columns:1fr 1fr}.head h1{font-size:24px}.wrap{padding:12px}}
+@media(max-width:520px){
+  .grid,.result{grid-template-columns:1fr 1fr}
+  .head h1{font-size:24px}
+  .wrap{padding:12px}
+  .tab-btn{padding:8px 14px;font-size:13px}
+  .card{padding:14px}
+  .stat b{font-size:20px}
+  .result strong{font-size:17px}
+}
 
 /* Dark Mode */
 body.dark {
@@ -140,7 +148,7 @@ body.dark .tab-btn.active { background:#2563eb; color:white; }
   <!-- ==================== PAGE 2: Saving & Personal Tracker ==================== -->
   <div id="pagePots" style="display:none">
 
-    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:14px;">
 
       <!-- Saving Pot -->
       <div class="card">
@@ -196,7 +204,7 @@ body.dark .tab-btn.active { background:#2563eb; color:white; }
 
     </div>
 
-    <p class="note" style="text-align:center;margin-top:8px">Note: Jab bhi aap Daily Income page mein extra income save karoge, 70% Saving aur 30% Personal balance mein automatically add ho jayega.</p>
+    <p class="note" style="text-align:center;margin-top:8px">Note: Jab bhi aap Daily Income page mein extra income save karoge, 70% Saving aur 30% Personal balance mein automatically add ho jayega. Record delete karne par balance se wapas minus ho jayega.</p>
 
   </div>
   <!-- ==================== END PAGE 2 ==================== -->
@@ -212,7 +220,7 @@ let data = JSON.parse(localStorage.getItem(KEY) || '[]');
 const savedBase = localStorage.getItem('baseDailyNeed_v1');
 if (savedBase !== null) BASE = Number(savedBase) || 700;
 
-// ===== NEW: Saving & Personal Pots =====
+// ===== Saving & Personal Pots =====
 let savingBalance = Number(localStorage.getItem('savingBalance_v1') || 0);
 let personalBalance = Number(localStorage.getItem('personalBalance_v1') || 0);
 let savingExpenses = JSON.parse(localStorage.getItem('savingExpenses_v1') || '[]');
@@ -222,7 +230,6 @@ const $ = id => document.getElementById(id);
 const money = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
 $('date').value = new Date().toISOString().slice(0, 10);
 
-// Set default dates for pots page
 function setDefaultPotsDates() {
   const today = new Date().toISOString().slice(0,10);
   if ($('savingDate') && !$('savingDate').value) $('savingDate').value = today;
@@ -289,7 +296,19 @@ function render() {
   calc();
 }
 
-function delRec(id) { data = data.filter(r => r.id !== id); render(); }
+function delRec(id) {
+  // ===== REVERSE SYNC: Delete karne par pots se minus karo =====
+  const rec = data.find(r => r.id === id);
+  if (rec) {
+    if (rec.save > 0) savingBalance = Math.max(0, savingBalance - rec.save);
+    if (rec.personal > 0) personalBalance = Math.max(0, personalBalance - rec.personal);
+    if (rec.save > 0 || rec.personal > 0) {
+      saveBalances();
+    }
+  }
+  data = data.filter(r => r.id !== id);
+  render();
+}
 
 $('income').addEventListener('input', calc);
 $('date').addEventListener('change', calc);
@@ -303,7 +322,7 @@ $('saveBtn').onclick = () => {
   const obj = { ...r, id: existing >= 0 ? data[existing].id : Date.now().toString(), created: existing >= 0 ? data[existing].created : Date.now() };
   if (existing >= 0) { if (!confirm('इस date का record पहले से है। Replace करें?')) return; data[existing] = obj; } else data.push(obj);
 
-  // ===== AUTO CREDIT TO POTS (70% + 30%) =====
+  // Auto credit to pots
   if (r.save > 0) savingBalance += r.save;
   if (r.personal > 0) personalBalance += r.personal;
   if (r.save > 0 || r.personal > 0) {
@@ -326,7 +345,7 @@ $('importFile').onchange = e => {
   rd.readAsText(f);
 };
 
-// ===== Base Daily Need editor =====
+// Base Daily Need editor
 $('setBaseBtn').onclick = () => {
   const val = Number($('baseInput').value);
   if (isNaN(val) || val < 0) { alert('Valid amount डालें'); return; }
@@ -341,7 +360,7 @@ $('baseInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') $('setBaseBtn').click();
 });
 
-// ===== NEW: Saving & Personal Functions =====
+// ===== Saving & Personal Functions =====
 function saveBalances() {
   localStorage.setItem('savingBalance_v1', savingBalance);
   localStorage.setItem('personalBalance_v1', personalBalance);
