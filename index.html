@@ -3,71 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Income Manager</title>
+<title>Daily Income Manager v2.0</title>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#687087;--line:#e6e9f0;--accent:#2563eb;--good:#087f5b;--warn:#c2410c}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
-.wrap{max-width:760px;margin:auto;padding:18px}.head{margin:8px 0 18px}.head h1{margin:0;font-size:27px}.head p{margin:6px 0;color:var(--muted)}
+:root {
+  --bg: #f5f7fb;
+  --card: #fff;
+  --text: #172033;
+  --muted: #687087;
+  --line: #e6e9f0;
+  --accent: #2563eb;
+  --good: #087f5b;
+  --warn: #c2410c;
+  --danger: #b42318;
+}
+body.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --line: #334155;
+  --accent: #3b82f6;
+  --good: #10b981;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
+.wrap{max-width:820px;margin:auto;padding:18px}
+.head{position:relative;margin:8px 0 18px}
+.head h1{margin:0;font-size:26px}
+.head p{margin:6px 0;color:var(--muted)}
+.theme-btn{position:absolute;top:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 5px 18px rgba(20,30,55,.05)}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{padding:13px;border:1px solid var(--line);border-radius:14px}.stat small{display:block;color:var(--muted);margin-bottom:5px}.stat b{font-size:22px}
-label{display:block;font-weight:650;margin:10px 0 6px}input,select,button{width:100%;font:inherit;border-radius:12px;padding:13px;border:1px solid #d8dde8;background:white}
-button{border:0;background:var(--accent);color:white;font-weight:750;cursor:pointer;margin-top:12px}.secondary{background:#eef2ff;color:#243b76}.danger{background:#fff1f2;color:#b42318}
-.result{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}.result div{background:#f8fafc;border-radius:12px;padding:12px}.result span{display:block;color:var(--muted);font-size:13px}.result strong{font-size:19px}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}.tablewrap{overflow-x:auto}
-.note{font-size:13px;color:var(--muted);line-height:1.5}.good{color:var(--good)}.warn{color:var(--warn)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:520px){.grid,.result{grid-template-columns:1fr 1fr}.head h1{font-size:24px}.wrap{padding:12px}}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{padding:13px;border:1px solid var(--line);border-radius:14px}
+.stat small{display:block;color:var(--muted);margin-bottom:5px;font-size:12px}
+.stat b{font-size:21px}
+label{display:block;font-weight:650;margin:10px 0 6px;font-size:14px}
+input,select,button{width:100%;font:inherit;border-radius:12px;padding:12px;border:1px solid #d8dde8;background:white;color:var(--text)}
+body.dark input, body.dark select {background:#0f172a;border-color:#475569}
+button{border:0;background:var(--accent);color:white;font-weight:750;cursor:pointer;margin-top:8px}
+button.secondary{background:#eef2ff;color:#1e40af}
+body.dark button.secondary{background:#1e3a8a;color:#bfdbfe}
+button.danger{background:#fff1f2;color:#b42318}
+body.dark button.danger{background:#3f1f1f;color:#fca5a5}
+.result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.result div{background:#f8fafc;border-radius:12px;padding:11px}
+body.dark .result div{background:#334155}
+.result span{display:block;color:var(--muted);font-size:12px}
+.result strong{font-size:18px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+.note{font-size:12.5px;color:var(--muted);line-height:1.45}
+.good{color:var(--good)}
+.warn{color:var(--warn)}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.monthly-overview .big-number{font-size:26px;font-weight:800}
+.progress-container{height:10px;background:#e2e8f0;border-radius:999px;margin:8px 0;overflow:hidden}
+body.dark .progress-container{background:#475569}
+.progress-bar{height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);transition:width .4s ease}
+body.dark .progress-bar{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal-header{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:4px 0}
+.cal-day{position:relative;min-height:52px;border:1px solid var(--line);border-radius:10px;padding:4px 5px;font-size:12px;cursor:pointer;transition:all .1s;display:flex;flex-direction:column;justify-content:space-between}
+.cal-day:hover{border-color:var(--accent);transform:scale(1.02)}
+.cal-day.empty{visibility:hidden}
+.cal-day.future{background:#f8fafc;color:#94a3b8}
+body.dark .cal-day.future{background:#1e293b}
+.cal-day.no-record{background:#fefce8}
+.cal-day.met{background:#dcfce7;border-color:#86efac}
+body.dark .cal-day.met{background:#14532d;border-color:#4ade80}
+.cal-day.partial{background:#fef3c7;border-color:#fcd34d}
+body.dark .cal-day.partial{background:#451a03;border-color:#fbbf24}
+.cal-day.missed{background:#fee2e2;border-color:#fca5a5}
+body.dark .cal-day.missed{background:#3f1f1f;border-color:#f87171}
+.cal-date{font-weight:700;font-size:13px}
+.cal-income{font-size:10px;color:var(--muted);margin-top:1px}
+.selected-day{outline:2px solid var(--accent);outline-offset:-2px}
+@media(max-width:520px){
+  .grid,.result{grid-template-columns:1fr 1fr}
+  .actions{grid-template-columns:1fr 1fr}
+  .head h1{font-size:23px}
+  .wrap{padding:12px}
+  .result{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="head">
-    <h1>💰 Daily Income Manager</h1>
-    <p>Need target, carry-forward shortfall और 70/30 split — एक ही जगह।</p>
+    <h1>💰 Daily Income Manager <span style="font-size:13px;color:var(--muted);font-weight:400">v2.0</span></h1>
+    <p>Base Need + Monthly Goal • Auto Daily Target • Progress Tracking</p>
+    <button id="themeToggle" class="theme-btn" title="Toggle dark mode">🌙</button>
   </div>
 
+  <!-- Monthly Goal Overview -->
+  <div class="card monthly-overview">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="margin:0">🎯 Monthly Goal</h3>
+      <div id="monthName" style="font-weight:700;color:var(--accent)"></div>
+    </div>
+
+    <div class="grid" style="margin-bottom:6px">
+      <div>
+        <small style="color:var(--muted)">Target</small>
+        <div class="big-number" id="goalTargetBig">₹0</div>
+      </div>
+      <div>
+        <small style="color:var(--muted)">Earned so far</small>
+        <div class="big-number good" id="incomeSoFar">₹0</div>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+      <span id="progressText">0%</span>
+      <span id="remainingAmountLabel"><b id="remainingAmount">₹0</b> remaining</span>
+    </div>
+
+    <div class="grid" style="font-size:13px">
+      <div class="stat" style="padding:9px 12px">
+        <small>Working Days</small>
+        <b id="workDaysDone">0 / 22</b>
+      </div>
+      <div class="stat" style="padding:9px 12px">
+        <small>Days Left</small>
+        <b id="workDaysLeft">22</b>
+      </div>
+      <div class="stat" style="padding:9px 12px">
+        <small>Today's Goal Target</small>
+        <b id="todayGoalTarget">₹0</b>
+      </div>
+      <div class="stat" style="padding:9px 12px">
+        <small>Expected Finish</small>
+        <b id="expectedFinish" style="color:var(--accent)">—</b>
+      </div>
+    </div>
+
+    <!-- Goal Settings -->
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px">
+          <label style="margin:0 0 4px">Monthly Target (₹)</label>
+          <input type="number" id="goalTargetInput" min="0" step="500" placeholder="25000">
+        </div>
+        <div style="flex:1;min-width:100px">
+          <label style="margin:0 0 4px">Total Work Days</label>
+          <input type="number" id="workDaysInput" min="5" max="31" value="22">
+        </div>
+        <div style="flex:0 0 auto">
+          <button id="saveGoalBtn" class="secondary" style="margin-top:22px;padding:10px 18px">Save Goal</button>
+        </div>
+      </div>
+      <p class="note" style="margin:6px 0 0">Goal set karein. App khud roz ka target calculate karega (Remaining ÷ Work Days Left).</p>
+    </div>
+  </div>
+
+  <!-- Top Quick Stats -->
   <div class="card">
     <div class="grid">
       <div class="stat"><small>Base Daily Need</small><b>₹700</b></div>
       <div class="stat"><small>Pending Shortfall</small><b id="pendingTop">₹0</b></div>
-      <div class="stat"><small>Today's Target</small><b id="targetTop">₹700</b></div>
-      <div class="stat"><small>Total Saving</small><b class="good" id="savingTop">₹0</b></div>
+      <div class="stat"><small>Today's Target (Effective)</small><b id="targetTop">₹700</b></div>
+      <div class="stat"><small>Total Saving (70%)</small><b class="good" id="savingTop">₹0</b></div>
     </div>
   </div>
 
+  <!-- Daily Entry -->
   <div class="card">
     <label for="date">Date</label>
     <input type="date" id="date">
-    <label for="dayType">Day Type</label>
-    <select id="dayType">
-      <option value="work">Working Day</option>
-      <option value="off">Off Day</option>
-    </select>
-    <label for="income">Today's Income (₹)</label>
-    <input type="number" id="income" min="0" step="1" placeholder="जैसे 1000" inputmode="numeric">
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:4px">
+      <div>
+        <label for="dayType">Day Type</label>
+        <select id="dayType">
+          <option value="work">Working Day</option>
+          <option value="off">Off Day</option>
+        </select>
+      </div>
+      <div>
+        <label for="income">Today's Income (₹)</label>
+        <input type="number" id="income" min="0" step="1" placeholder="जैसे 1200" inputmode="numeric">
+      </div>
+    </div>
+
+    <!-- Live Calculation -->
+    <div style="margin:12px 0 4px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Target Breakdown</div>
+      <div class="result" style="grid-template-columns:repeat(3,1fr);margin-top:0">
+        <div><span>Base Need Target</span><strong id="rBase">₹700</strong></div>
+        <div><span>Monthly Goal Daily</span><strong id="rMonthly">₹0</strong></div>
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0"><span style="color:#166534">Final Effective Target</span><strong id="rTarget" style="color:#166534">₹700</strong></div>
+      </div>
+    </div>
 
     <div class="result">
-      <div><span>Today's Target</span><strong id="rTarget">₹700</strong></div>
       <div><span>Need Used</span><strong id="rNeed">₹0</strong></div>
       <div><span>New Shortfall</span><strong class="warn" id="rShort">₹0</strong></div>
       <div><span>Extra Income</span><strong id="rExtra">₹0</strong></div>
-      <div><span>Saving 70%</span><strong class="good" id="rSave">₹0</strong></div>
-      <div><span>Personal 30%</span><strong id="rPersonal">₹0</strong></div>
+      <div><span>Saving (70%)</span><strong class="good" id="rSave">₹0</strong></div>
+      <div><span>Personal (30%)</span><strong id="rPersonal">₹0</strong></div>
+      <div><span>Income vs Target</span><strong id="rDiff">₹0</strong></div>
     </div>
+
     <button id="saveBtn">Save Record</button>
-    <p class="note">Working Day पर target = ₹700 + पिछली pending कमी। Off Day पर नया ₹700 target नहीं जुड़ता। पहले pending need clear होगी, फिर extra income का 70% saving और 30% personal होगा।</p>
+    <p class="note">
+      Final Target = Max(Base Need + Pending, Monthly Goal Daily).<br>
+      Shortfall carry-forward effective target के हिसाब से होता है। Off day पर नया base नहीं जुड़ता।
+    </p>
   </div>
 
+  <!-- Monthly Summary -->
   <div class="card">
-    <h3>Monthly Summary</h3>
+    <h3>📊 Monthly Summary</h3>
     <div class="grid">
       <div class="stat"><small>Total Income</small><b id="sumIncome">₹0</b></div>
       <div class="stat"><small>Total Need Used</small><b id="sumNeed">₹0</b></div>
-      <div class="stat"><small>Total Saving</small><b class="good" id="sumSave">₹0</b></div>
-      <div class="stat"><small>Total Personal</small><b id="sumPersonal">₹0</b></div>
+      <div class="stat"><small>Total Saving (70%)</small><b class="good" id="sumSave">₹0</b></div>
+      <div class="stat"><small>Total Personal (30%)</small><b id="sumPersonal">₹0</b></div>
     </div>
   </div>
 
+  <!-- Calendar View -->
+  <div class="card">
+    <h3 style="margin:0 0 8px">📅 Calendar View <span id="calMonthLabel" style="font-size:13px;color:var(--muted)"></span></h3>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap">
+      <span><span style="color:#166534">🟢</span> Target met</span>
+      <span><span style="color:#854d0e">🟡</span> Partial income</span>
+      <span><span style="color:#9f1239">🔴</span> Shortfall / Missed</span>
+      <span><span style="color:#a3a3a3">⚪</span> No record</span>
+    </div>
+  </div>
+
+  <!-- Saved Records -->
   <div class="card">
     <h3>Saved Records</h3>
     <div class="tablewrap">
@@ -78,91 +252,467 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 7px;
     </div>
   </div>
 
+  <!-- Actions -->
   <div class="card">
     <div class="actions">
       <button class="secondary" id="exportBtn">Backup JSON</button>
+      <button id="csvBtn">Export CSV</button>
       <button class="danger" id="clearBtn">Clear All Data</button>
     </div>
-    <label for="importFile">Restore Backup</label>
+    <label for="importFile" style="margin-top:12px">Restore Backup (JSON)</label>
     <input type="file" id="importFile" accept=".json,application/json">
   </div>
 </div>
 
 <script>
-const BASE=700, KEY='dailyIncomeManager_v1';
-let data=JSON.parse(localStorage.getItem(KEY)||'[]');
-const $=id=>document.getElementById(id);
-const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
-$('date').value=new Date().toISOString().slice(0,10);
+// ==================== CONFIG & STATE ====================
+const BASE = 700;
+const KEY = 'dailyIncomeManager_v2';
+const GOAL_KEY = 'dailyIncomeManager_goals_v2';
 
-function ordered(){return [...data].sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created)}
-function stateBefore(date){
-  let pending=0;
-  for(const r of ordered()){
-    if(r.date>=date) break;
-    pending=r.shortfall;
+let data = JSON.parse(localStorage.getItem(KEY) || '[]');
+let monthlySettings = JSON.parse(localStorage.getItem(GOAL_KEY) || '{}');
+
+const $ = id => document.getElementById(id);
+const money = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
+
+// ==================== HELPERS ====================
+function getMonthKey(dateStr) {
+  return dateStr.slice(0, 7); // YYYY-MM
+}
+
+function getMonthSettings(monthKey) {
+  if (!monthlySettings[monthKey]) {
+    monthlySettings[monthKey] = { target: 0, totalWorkDays: 22 };
+  }
+  return monthlySettings[monthKey];
+}
+
+function saveMonthlySettings() {
+  localStorage.setItem(GOAL_KEY, JSON.stringify(monthlySettings));
+}
+
+function ordered() {
+  return [...data].sort((a, b) => a.date.localeCompare(b.date) || (a.created || 0) - (b.created || 0));
+}
+
+function getMonthName(monthKey) {
+  const d = new Date(monthKey + '-01');
+  return d.toLocaleString('hi-IN', { month: 'long', year: 'numeric' });
+}
+
+// Calculate monthly daily target for a specific date (income before this date only)
+function calculateMonthlyDailyTarget(dateStr, snapshot = data) {
+  const monthKey = getMonthKey(dateStr);
+  const settings = getMonthSettings(monthKey);
+  const goal = settings.target || 0;
+  if (goal <= 0) return 0;
+
+  const prevIncome = snapshot
+    .filter(r => getMonthKey(r.date) === monthKey && r.date < dateStr)
+    .reduce((sum, r) => sum + (r.income || 0), 0);
+
+  const remaining = Math.max(0, goal - prevIncome);
+
+  const workDone = snapshot
+    .filter(r => getMonthKey(r.date) === monthKey && r.date < dateStr && r.type === 'work')
+    .length;
+
+  const totalWD = settings.totalWorkDays || 22;
+  const remainingWD = Math.max(1, totalWD - workDone);
+  return Math.ceil(remaining / remainingWD);
+}
+
+// Expected finish date based on average daily income so far
+function getExpectedFinish(monthKey) {
+  const settings = getMonthSettings(monthKey);
+  const goal = settings.target || 0;
+  if (!goal) return null;
+
+  const monthRecs = data.filter(r => getMonthKey(r.date) === monthKey);
+  if (monthRecs.length === 0) return null;
+
+  const incomeSoFar = monthRecs.reduce((s, r) => s + r.income, 0);
+  const remaining = Math.max(0, goal - incomeSoFar);
+  if (remaining <= 0) return '🎉 Goal Complete!';
+
+  const workDone = monthRecs.filter(r => r.type === 'work').length;
+  if (workDone === 0) return null;
+
+  const avg = incomeSoFar / workDone;
+  if (avg <= 0) return null;
+
+  const daysNeeded = Math.ceil(remaining / avg);
+  const base = new Date();
+  base.setDate(base.getDate() + daysNeeded);
+  return base.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+
+// ==================== CORE LOGIC ( upgraded ) ====================
+function stateBefore(date) {
+  let pending = 0;
+  for (const r of ordered()) {
+    if (r.date >= date) break;
+    pending = r.shortfall || 0;
   }
   return pending;
 }
-function calc(){
-  const date=$('date').value, type=$('dayType').value, income=Math.max(0,Number($('income').value)||0);
-  const prev=stateBefore(date);
-  const target=type==='work'?BASE+prev:prev;
-  const need=Math.min(income,target);
-  const shortfall=Math.max(0,target-income);
-  const extra=Math.max(0,income-target);
-  const save=extra*.7, personal=extra*.3;
-  $('rTarget').textContent=money(target); $('rNeed').textContent=money(need);
-  $('rShort').textContent=money(shortfall); $('rExtra').textContent=money(extra);
-  $('rSave').textContent=money(save); $('rPersonal').textContent=money(personal);
-  return {date,type,income,target,need,shortfall,extra,save,personal};
-}
-function recompute(){
-  let pending=0;
-  data=ordered().map(r=>{
-    const target=r.type==='work'?BASE+pending:pending;
-    const need=Math.min(r.income,target), shortfall=Math.max(0,target-r.income);
-    const extra=Math.max(0,r.income-target), save=extra*.7, personal=extra*.3;
-    pending=shortfall;
-    return {...r,target,need,shortfall,extra,save,personal};
+
+function recompute() {
+  let pending = 0;
+  const snapshot = [...data]; // incomes unchanged
+
+  data = ordered().map(r => {
+    const monthlyD = calculateMonthlyDailyTarget(r.date, snapshot);
+    const baseT = r.type === 'work' ? BASE + pending : pending;
+    const target = Math.max(baseT, monthlyD);
+
+    const need = Math.min(r.income || 0, target);
+    const shortfall = Math.max(0, target - (r.income || 0));
+    const extra = Math.max(0, (r.income || 0) - target);
+    const save = Math.round(extra * 0.7);
+    const personal = extra - save;
+
+    pending = shortfall;
+    return { ...r, target, need, shortfall, extra, save, personal };
   });
-  localStorage.setItem(KEY,JSON.stringify(data));
+
+  localStorage.setItem(KEY, JSON.stringify(data));
 }
-function render(){
+
+function calc() {
+  const date = $('date').value;
+  const type = $('dayType').value;
+  const income = Math.max(0, Number($('income').value) || 0);
+
+  if (!date) return;
+
+  const prevPending = stateBefore(date);
+  const monthlyD = calculateMonthlyDailyTarget(date);
+  const baseT = type === 'work' ? BASE + prevPending : prevPending;
+  const target = Math.max(baseT, monthlyD);
+
+  const need = Math.min(income, target);
+  const shortfall = Math.max(0, target - income);
+  const extra = Math.max(0, income - target);
+  const save = Math.round(extra * 0.7);
+  const personal = extra - save;
+  const diff = income - target;
+
+  // Update result fields
+  $('rBase').textContent = money(baseT);
+  $('rMonthly').textContent = money(monthlyD);
+  $('rTarget').textContent = money(target);
+  $('rNeed').textContent = money(need);
+  $('rShort').textContent = money(shortfall);
+  $('rExtra').textContent = money(extra);
+  $('rSave').textContent = money(save);
+  $('rPersonal').textContent = money(personal);
+  $('rDiff').textContent = (diff >= 0 ? '+' : '') + money(diff);
+
+  // Update top bar
+  $('pendingTop').textContent = money(prevPending);
+  $('targetTop').textContent = money(target);
+
+  updateSaveButton();
+}
+
+function render() {
   recompute();
-  const rows=ordered();
-  const pending=rows.length?rows[rows.length-1].shortfall:0;
-  $('pendingTop').textContent=money(pending); $('targetTop').textContent=money(BASE+pending);
-  $('savingTop').textContent=money(rows.reduce((s,r)=>s+r.save,0));
-  $('sumIncome').textContent=money(rows.reduce((s,r)=>s+r.income,0));
-  $('sumNeed').textContent=money(rows.reduce((s,r)=>s+r.need,0));
-  $('sumSave').textContent=money(rows.reduce((s,r)=>s+r.save,0));
-  $('sumPersonal').textContent=money(rows.reduce((s,r)=>s+r.personal,0));
-  $('records').innerHTML=rows.length? [...rows].reverse().map(r=>`<tr><td>${r.date}</td><td>${money(r.income)}</td><td>${money(r.target)}</td><td>${money(r.shortfall)}</td><td>${money(r.save)}</td><td>${money(r.personal)}</td><td><button class="danger" style="padding:6px;margin:0" onclick="delRec('${r.id}')">×</button></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#687087">अभी कोई record नहीं है</td></tr>';
+
+  const rows = ordered();
+  const pending = rows.length ? rows[rows.length - 1].shortfall : 0;
+
+  // Top stats
+  $('pendingTop').textContent = money(pending);
+  $('targetTop').textContent = money(BASE + pending);
+  $('savingTop').textContent = money(rows.reduce((s, r) => s + (r.save || 0), 0));
+
+  // Monthly summary
+  $('sumIncome').textContent = money(rows.reduce((s, r) => s + (r.income || 0), 0));
+  $('sumNeed').textContent = money(rows.reduce((s, r) => s + (r.need || 0), 0));
+  $('sumSave').textContent = money(rows.reduce((s, r) => s + (r.save || 0), 0));
+  $('sumPersonal').textContent = money(rows.reduce((s, r) => s + (r.personal || 0), 0));
+
+  // Records table
+  $('records').innerHTML = rows.length
+    ? [...rows].reverse().map(r => `
+      <tr>
+        <td>${r.date}</td>
+        <td>${money(r.income)}</td>
+        <td>${money(r.target)}</td>
+        <td class="${r.shortfall > 0 ? 'warn' : ''}">${money(r.shortfall)}</td>
+        <td class="good">${money(r.save)}</td>
+        <td>${money(r.personal)}</td>
+        <td><button class="danger" style="padding:4px 8px;margin:0;font-size:12px" onclick="delRec('${r.id}')">×</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;color:#687087">अभी कोई record नहीं है</td></tr>';
+
+  // Update monthly overview + calendar for current form date
+  updateMonthlyOverview();
+  const currentMonthKey = getMonthKey($('date').value || new Date().toISOString().slice(0,10));
+  renderCalendar(currentMonthKey);
+
   calc();
 }
-function delRec(id){data=data.filter(r=>r.id!==id);render()}
-$('income').addEventListener('input',calc); $('date').addEventListener('change',calc); $('dayType').addEventListener('change',calc);
-$('saveBtn').onclick=()=>{
-  if(!$('date').value){alert('Date चुनें');return}
-  if($('income').value===''){alert('Income डालें');return}
-  const r=calc();
-  const existing=data.findIndex(x=>x.date===r.date);
-  const obj={...r,id:existing>=0?data[existing].id:Date.now().toString(),created:existing>=0?data[existing].created:Date.now()};
-  if(existing>=0){if(!confirm('इस date का record पहले से है। Replace करें?'))return;data[existing]=obj}else data.push(obj);
-  $('income').value='';render();
+
+function delRec(id) {
+  if (!confirm('इस record को delete करें?')) return;
+  data = data.filter(r => r.id !== id);
+  render();
+}
+
+function updateSaveButton() {
+  const date = $('date').value;
+  const exists = data.some(x => x.date === date);
+  const btn = $('saveBtn');
+  btn.textContent = exists ? 'Update Record' : 'Save Record';
+  btn.classList.toggle('secondary', exists);
+}
+
+function loadRecordForDate(dateStr) {
+  const rec = data.find(r => r.date === dateStr);
+  if (rec) {
+    $('income').value = rec.income;
+    $('dayType').value = rec.type || 'work';
+  }
+  // If no record, keep whatever is in income field (for new entry preview)
+}
+
+function updateMonthlyOverview() {
+  const dateVal = $('date').value || new Date().toISOString().slice(0,10);
+  const monthKey = getMonthKey(dateVal);
+  const settings = getMonthSettings(monthKey);
+  const goal = settings.target || 0;
+
+  // Month label
+  $('monthName').textContent = getMonthName(monthKey);
+  $('calMonthLabel').textContent = getMonthName(monthKey);
+
+  // Goal inputs prefill
+  $('goalTargetInput').value = goal || '';
+  $('workDaysInput').value = settings.totalWorkDays || 22;
+
+  const monthRecs = data.filter(r => getMonthKey(r.date) === monthKey);
+  const totalIncome = monthRecs.reduce((s, r) => s + (r.income || 0), 0);
+
+  const pct = goal > 0 ? Math.min(100, Math.round((totalIncome / goal) * 100)) : 0;
+
+  $('goalTargetBig').textContent = money(goal);
+  $('incomeSoFar').textContent = money(totalIncome);
+  $('progressBar').style.width = pct + '%';
+  $('progressText').textContent = pct + '%';
+  $('remainingAmount').textContent = money(Math.max(0, goal - totalIncome));
+
+  const workDone = monthRecs.filter(r => r.type === 'work').length;
+  const totalWD = settings.totalWorkDays || 22;
+  $('workDaysDone').textContent = `${workDone} / ${totalWD}`;
+  $('workDaysLeft').textContent = Math.max(0, totalWD - workDone);
+
+  // Today's goal target (for selected date)
+  const monthlyD = calculateMonthlyDailyTarget(dateVal);
+  $('todayGoalTarget').textContent = money(monthlyD);
+
+  // Expected finish
+  const finish = getExpectedFinish(monthKey);
+  $('expectedFinish').textContent = finish || '—';
+}
+
+// ==================== CALENDAR ====================
+function renderCalendar(monthKey) {
+  const container = $('calendarGrid');
+  container.innerHTML = '';
+
+  const [year, month] = monthKey.split('-').map(Number);
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const lastDate = new Date(year, month, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  // Header
+  ['S','M','T','W','T','F','S'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-header';
+    h.textContent = d;
+    container.appendChild(h);
+  });
+
+  // Empty before first day
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    container.appendChild(empty);
+  }
+
+  for (let d = 1; d <= lastDate; d++) {
+    const dateStr = `${monthKey}-${String(d).padStart(2, '0')}`;
+    const rec = data.find(r => r.date === dateStr);
+
+    const dayEl = document.createElement('div');
+    dayEl.className = 'cal-day';
+    dayEl.dataset.date = dateStr;
+
+    let html = `<div class="cal-date">${d}</div>`;
+
+    if (rec) {
+      const met = rec.shortfall === 0 && rec.income >= rec.target;
+      if (met) {
+        dayEl.classList.add('met');
+        html += `<div class="cal-income">${money(rec.income).replace('₹','')}</div>✅`;
+      } else if (rec.income > 0) {
+        dayEl.classList.add('partial');
+        html += `<div class="cal-income">${money(rec.income).replace('₹','')}</div>`;
+      } else {
+        dayEl.classList.add('missed');
+        html += `<div class="cal-income">0</div>❌`;
+      }
+    } else {
+      if (dateStr > todayStr) {
+        dayEl.classList.add('future');
+      } else {
+        dayEl.classList.add('no-record');
+      }
+      html += `<div class="cal-income" style="opacity:0.4">—</div>`;
+    }
+
+    dayEl.innerHTML = html;
+
+    dayEl.onclick = () => {
+      $('date').value = dateStr;
+      loadRecordForDate(dateStr);
+      calc();
+      // Re-render calendar to show selection (simple way)
+      renderCalendar(monthKey);
+    };
+
+    container.appendChild(dayEl);
+  }
+}
+
+// ==================== EVENT LISTENERS ====================
+$('income').addEventListener('input', calc);
+$('date').addEventListener('change', () => {
+  loadRecordForDate($('date').value);
+  calc();
+  updateMonthlyOverview();
+  const mk = getMonthKey($('date').value);
+  renderCalendar(mk);
+});
+$('dayType').addEventListener('change', calc);
+
+$('saveBtn').onclick = () => {
+  if (!$('date').value) { alert('Date चुनें'); return; }
+  if ($('income').value === '') { alert('Income डालें'); return; }
+
+  const r = {
+    date: $('date').value,
+    type: $('dayType').value,
+    income: Math.max(0, Number($('income').value) || 0),
+    created: Date.now()
+  };
+
+  const existingIndex = data.findIndex(x => x.date === r.date);
+  if (existingIndex >= 0) {
+    if (!confirm('इस date का record पहले से है। Update करें?')) return;
+    r.id = data[existingIndex].id;
+    r.created = data[existingIndex].created;
+    data[existingIndex] = r;
+  } else {
+    r.id = Date.now().toString();
+    data.push(r);
+  }
+
+  $('income').value = '';
+  render();
 };
-$('clearBtn').onclick=()=>{if(confirm('सारा saved data delete करना है?')){data=[];render()}};
-$('exportBtn').onclick=()=>{
- const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='income-backup.json';a.click();URL.revokeObjectURL(a.href);
+
+$('clearBtn').onclick = () => {
+  if (confirm('सारा data delete करना है?')) {
+    data = [];
+    localStorage.removeItem(KEY);
+    render();
+  }
 };
-$('importFile').onchange=e=>{
- const f=e.target.files[0];if(!f)return;const rd=new FileReader();
- rd.onload=()=>{try{const x=JSON.parse(rd.result);if(!Array.isArray(x))throw 0;data=x;render();alert('Backup restored')}catch{alert('Invalid backup file')}};
- rd.readAsText(f);
+
+$('exportBtn').onclick = () => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `income-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 };
+
+$('csvBtn').onclick = () => {
+  if (!data.length) { alert('कोई data नहीं है'); return; }
+  let csv = 'Date,Type,Income,Target,Need,Shortfall,Extra,Save70,Personal30\n';
+  ordered().forEach(r => {
+    csv += `${r.date},${r.type},${r.income},${r.target},${r.need},${r.shortfall},${r.extra},${r.save},${r.personal}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `income-report-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+$('importFile').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const x = JSON.parse(rd.result);
+      if (!Array.isArray(x)) throw new Error('Invalid');
+      data = x;
+      render();
+      alert('Backup restored successfully!');
+    } catch {
+      alert('Invalid backup file');
+    }
+  };
+  rd.readAsText(f);
+};
+
+// Goal save
+$('saveGoalBtn').onclick = () => {
+  const dateVal = $('date').value || new Date().toISOString().slice(0,10);
+  const monthKey = getMonthKey(dateVal);
+  const targetVal = parseInt($('goalTargetInput').value) || 0;
+  const wdVal = parseInt($('workDaysInput').value) || 22;
+
+  monthlySettings[monthKey] = { target: targetVal, totalWorkDays: wdVal };
+  saveMonthlySettings();
+  render();
+  alert('Monthly goal saved for ' + getMonthName(monthKey));
+};
+
+// ==================== INIT ====================
+// Set today's date
+const today = new Date().toISOString().slice(0, 10);
+$('date').value = today;
+
+// Theme
+let isDark = localStorage.getItem('theme') === 'dark';
+if (isDark) document.body.classList.add('dark');
+$('themeToggle').textContent = isDark ? '☀️' : '🌙';
+$('themeToggle').onclick = () => {
+  isDark = !isDark;
+  document.body.classList.toggle('dark', isDark);
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
+};
+
+// Initial render
 render();
+
+// Bonus: if no goal set for current month, gently suggest
+setTimeout(() => {
+  const mk = getMonthKey(today);
+  if (!monthlySettings[mk] || !monthlySettings[mk].target) {
+    // do nothing, user can set when ready
+  }
+}, 1200);
 </script>
 </body>
 </html>
