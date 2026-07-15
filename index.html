@@ -16,6 +16,8 @@ button{border:0;background:var(--accent);color:white;font-weight:750;cursor:poin
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}.tablewrap{overflow-x:auto}
 .note{font-size:13px;color:var(--muted);line-height:1.5}.good{color:var(--good)}.warn{color:var(--warn)}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tab-btn{padding:10px 20px;border-radius:9999px;border:1px solid var(--line);background:white;font-weight:600;cursor:pointer;font-size:14px}
+.tab-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
 @media(max-width:520px){.grid,.result{grid-template-columns:1fr 1fr}.head h1{font-size:24px}.wrap{padding:12px}}
 
 /* Dark Mode */
@@ -37,10 +39,13 @@ body.dark .note { color: #94a3b8; }
 body.dark table th,
 body.dark table td { border-bottom-color: #475569; }
 body.dark .stat { background: #1e2937; }
+body.dark .tab-btn { background:#1e2937; color:#e2e8f0; border-color:#475569; }
+body.dark .tab-btn.active { background:#2563eb; color:white; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <!-- Header -->
   <div class="head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
     <div>
       <h1 style="margin:0">💰 Daily Income Manager</h1>
@@ -49,76 +54,153 @@ body.dark .stat { background: #1e2937; }
     <button id="themeToggle" class="secondary" style="margin:4px 0 0;padding:8px 12px;font-size:20px;width:auto;flex-shrink:0;border-radius:9999px" title="Toggle Dark / Light Mode">🌙</button>
   </div>
 
-  <div class="card">
-    <div class="grid">
-      <div class="stat"><small>Base Daily Need</small><b id="baseDisplay">₹700</b></div>
-      <div class="stat"><small>Pending Shortfall</small><b id="pendingTop">₹0</b></div>
-      <div class="stat"><small>Today's Target</small><b id="targetTop">₹700</b></div>
-      <div class="stat"><small>Total Saving</small><b class="good" id="savingTop">₹0</b></div>
-    </div>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
-      <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
-        <div style="flex:1;min-width:160px">
-          <label style="margin:0 0 4px;font-size:12px;color:var(--muted)">Change Base Daily Need</label>
-          <input type="number" id="baseInput" min="0" step="50" value="700" style="padding:8px 12px;font-size:15px">
-        </div>
-        <button id="setBaseBtn" class="secondary" style="margin:0;padding:9px 18px;flex-shrink:0">Update Base</button>
+  <!-- Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button id="tabDaily" class="tab-btn active">📊 Daily Income</button>
+    <button id="tabPots" class="tab-btn">💰 Saving &amp; Personal</button>
+  </div>
+
+  <!-- ==================== PAGE 1: Daily Income ==================== -->
+  <div id="pageDaily">
+
+    <div class="card">
+      <div class="grid">
+        <div class="stat"><small>Base Daily Need</small><b id="baseDisplay">₹700</b></div>
+        <div class="stat"><small>Pending Shortfall</small><b id="pendingTop">₹0</b></div>
+        <div class="stat"><small>Today's Target</small><b id="targetTop">₹700</b></div>
+        <div class="stat"><small>Total Saving</small><b class="good" id="savingTop">₹0</b></div>
       </div>
-      <p class="note" style="margin:6px 0 0;font-size:12px">Base बदलने पर पुराने records के targets automatically recalculate हो जाएंगे।</p>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+        <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
+          <div style="flex:1;min-width:160px">
+            <label style="margin:0 0 4px;font-size:12px;color:var(--muted)">Change Base Daily Need</label>
+            <input type="number" id="baseInput" min="0" step="50" value="700" style="padding:8px 12px;font-size:15px">
+          </div>
+          <button id="setBaseBtn" class="secondary" style="margin:0;padding:9px 18px;flex-shrink:0">Update Base</button>
+        </div>
+        <p class="note" style="margin:6px 0 0;font-size:12px">Base बदलने पर पुराने records के targets automatically recalculate हो जाएंगे।</p>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <label for="date">Date</label>
-    <input type="date" id="date">
-    <label for="dayType">Day Type</label>
-    <select id="dayType">
-      <option value="work">Working Day</option>
-      <option value="off">Off Day</option>
-    </select>
-    <label for="income">Today's Income (₹)</label>
-    <input type="number" id="income" min="0" step="1" placeholder="जैसे 1000" inputmode="numeric">
+    <div class="card">
+      <label for="date">Date</label>
+      <input type="date" id="date">
+      <label for="dayType">Day Type</label>
+      <select id="dayType">
+        <option value="work">Working Day</option>
+        <option value="off">Off Day</option>
+      </select>
+      <label for="income">Today's Income (₹)</label>
+      <input type="number" id="income" min="0" step="1" placeholder="जैसे 1000" inputmode="numeric">
 
-    <div class="result">
-      <div><span>Today's Target</span><strong id="rTarget">₹700</strong></div>
-      <div><span>Need Used</span><strong id="rNeed">₹0</strong></div>
-      <div><span>New Shortfall</span><strong class="warn" id="rShort">₹0</strong></div>
-      <div><span>Extra Income</span><strong id="rExtra">₹0</strong></div>
-      <div><span>Saving 70%</span><strong class="good" id="rSave">₹0</strong></div>
-      <div><span>Personal 30%</span><strong id="rPersonal">₹0</strong></div>
+      <div class="result">
+        <div><span>Today's Target</span><strong id="rTarget">₹700</strong></div>
+        <div><span>Need Used</span><strong id="rNeed">₹0</strong></div>
+        <div><span>New Shortfall</span><strong class="warn" id="rShort">₹0</strong></div>
+        <div><span>Extra Income</span><strong id="rExtra">₹0</strong></div>
+        <div><span>Saving 70%</span><strong class="good" id="rSave">₹0</strong></div>
+        <div><span>Personal 30%</span><strong id="rPersonal">₹0</strong></div>
+      </div>
+      <button id="saveBtn">Save Record</button>
+      <p class="note">Working Day पर target = Base Daily Need + पिछली pending कमी। Off Day पर नया target नहीं जुड़ता। पहले pending need clear होगी, फिर extra income का 70% saving और 30% personal होगा।</p>
     </div>
-    <button id="saveBtn">Save Record</button>
-    <p class="note">Working Day पर target = Base Daily Need + पिछली pending कमी। Off Day पर नया target नहीं जुड़ता। पहले pending need clear होगी, फिर extra income का 70% saving और 30% personal होगा।</p>
-  </div>
 
-  <div class="card">
-    <h3>Monthly Summary</h3>
-    <div class="grid">
-      <div class="stat"><small>Total Income</small><b id="sumIncome">₹0</b></div>
-      <div class="stat"><small>Total Need Used</small><b id="sumNeed">₹0</b></div>
-      <div class="stat"><small>Total Saving</small><b class="good" id="sumSave">₹0</b></div>
-      <div class="stat"><small>Total Personal</small><b id="sumPersonal">₹0</b></div>
+    <div class="card">
+      <h3>Monthly Summary</h3>
+      <div class="grid">
+        <div class="stat"><small>Total Income</small><b id="sumIncome">₹0</b></div>
+        <div class="stat"><small>Total Need Used</small><b id="sumNeed">₹0</b></div>
+        <div class="stat"><small>Total Saving</small><b class="good" id="sumSave">₹0</b></div>
+        <div class="stat"><small>Total Personal</small><b id="sumPersonal">₹0</b></div>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h3>Saved Records</h3>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Date</th><th>Income</th><th>Target</th><th>Shortfall</th><th>70%</th><th>30%</th><th></th></tr></thead>
-        <tbody id="records"></tbody>
-      </table>
+    <div class="card">
+      <h3>Saved Records</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Date</th><th>Income</th><th>Target</th><th>Shortfall</th><th>70%</th><th>30%</th><th></th></tr></thead>
+          <tbody id="records"></tbody>
+        </table>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="actions">
-      <button class="secondary" id="exportBtn">Backup JSON</button>
-      <button class="danger" id="clearBtn">Clear All Data</button>
+    <div class="card">
+      <div class="actions">
+        <button class="secondary" id="exportBtn">Backup JSON</button>
+        <button class="danger" id="clearBtn">Clear All Data</button>
+      </div>
+      <label for="importFile">Restore Backup</label>
+      <input type="file" id="importFile" accept=".json,application/json">
     </div>
-    <label for="importFile">Restore Backup</label>
-    <input type="file" id="importFile" accept=".json,application/json">
+
   </div>
+  <!-- ==================== END PAGE 1 ==================== -->
+
+  <!-- ==================== PAGE 2: Saving & Personal Tracker ==================== -->
+  <div id="pagePots" style="display:none">
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+
+      <!-- Saving Pot -->
+      <div class="card">
+        <h3 style="margin-top:0;margin-bottom:4px">💵 Saving Pot <span style="font-size:13px;color:var(--good)">(70%)</span></h3>
+        <div style="text-align:center;margin:10px 0 16px">
+          <div style="font-size:12px;color:var(--muted)">Current Balance</div>
+          <div style="font-size:34px;font-weight:800;color:var(--good)" id="savingBalance">₹0</div>
+        </div>
+
+        <label>Date</label>
+        <input type="date" id="savingDate">
+        <label>Amount (₹)</label>
+        <input type="number" id="savingAmount" min="1" step="1" placeholder="जैसे 500">
+        <label>Kahan kharch kiya? (Description)</label>
+        <input type="text" id="savingDesc" placeholder="जैसे Grocery, Medical, Petrol...">
+
+        <button id="deductSavingBtn" style="background:#087f5b;margin-top:10px">✓ Kharch kiya (Deduct from Saving)</button>
+
+        <h4 style="margin:18px 0 6px;font-size:14px">Expense History</h4>
+        <div class="tablewrap">
+          <table style="font-size:12.5px">
+            <thead><tr><th>Date</th><th>Amount</th><th style="text-align:left">Kahan</th><th></th></tr></thead>
+            <tbody id="savingExpensesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Personal Pot -->
+      <div class="card">
+        <h3 style="margin-top:0;margin-bottom:4px">👤 Personal Pot <span style="font-size:13px;color:#c2410c">(30%)</span></h3>
+        <div style="text-align:center;margin:10px 0 16px">
+          <div style="font-size:12px;color:var(--muted)">Current Balance</div>
+          <div style="font-size:34px;font-weight:800;color:#c2410c" id="personalBalance">₹0</div>
+        </div>
+
+        <label>Date</label>
+        <input type="date" id="personalDate">
+        <label>Amount (₹)</label>
+        <input type="number" id="personalAmount" min="1" step="1" placeholder="जैसे 300">
+        <label>Kahan kharch kiya? (Description)</label>
+        <input type="text" id="personalDesc" placeholder="जैसे Movie, Eating out, Shopping...">
+
+        <button id="deductPersonalBtn" style="background:#c2410c;margin-top:10px">✓ Kharch kiya (Deduct from Personal)</button>
+
+        <h4 style="margin:18px 0 6px;font-size:14px">Expense History</h4>
+        <div class="tablewrap">
+          <table style="font-size:12.5px">
+            <thead><tr><th>Date</th><th>Amount</th><th style="text-align:left">Kahan</th><th></th></tr></thead>
+            <tbody id="personalExpensesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="note" style="text-align:center;margin-top:8px">Note: Jab bhi aap Daily Income page mein extra income save karoge, 70% Saving aur 30% Personal balance mein automatically add ho jayega.</p>
+
+  </div>
+  <!-- ==================== END PAGE 2 ==================== -->
+
 </div>
 
 <script>
@@ -126,13 +208,26 @@ let BASE = 700;
 const KEY = 'dailyIncomeManager_v1';
 let data = JSON.parse(localStorage.getItem(KEY) || '[]');
 
-// Load saved custom base if exists
+// Load saved custom base
 const savedBase = localStorage.getItem('baseDailyNeed_v1');
 if (savedBase !== null) BASE = Number(savedBase) || 700;
+
+// ===== NEW: Saving & Personal Pots =====
+let savingBalance = Number(localStorage.getItem('savingBalance_v1') || 0);
+let personalBalance = Number(localStorage.getItem('personalBalance_v1') || 0);
+let savingExpenses = JSON.parse(localStorage.getItem('savingExpenses_v1') || '[]');
+let personalExpenses = JSON.parse(localStorage.getItem('personalExpenses_v1') || '[]');
 
 const $ = id => document.getElementById(id);
 const money = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
 $('date').value = new Date().toISOString().slice(0, 10);
+
+// Set default dates for pots page
+function setDefaultPotsDates() {
+  const today = new Date().toISOString().slice(0,10);
+  if ($('savingDate') && !$('savingDate').value) $('savingDate').value = today;
+  if ($('personalDate') && !$('personalDate').value) $('personalDate').value = today;
+}
 
 function ordered() { return [...data].sort((a, b) => a.date.localeCompare(b.date) || a.created - b.created); }
 
@@ -207,6 +302,14 @@ $('saveBtn').onclick = () => {
   const existing = data.findIndex(x => x.date === r.date);
   const obj = { ...r, id: existing >= 0 ? data[existing].id : Date.now().toString(), created: existing >= 0 ? data[existing].created : Date.now() };
   if (existing >= 0) { if (!confirm('इस date का record पहले से है। Replace करें?')) return; data[existing] = obj; } else data.push(obj);
+
+  // ===== AUTO CREDIT TO POTS (70% + 30%) =====
+  if (r.save > 0) savingBalance += r.save;
+  if (r.personal > 0) personalBalance += r.personal;
+  if (r.save > 0 || r.personal > 0) {
+    saveBalances();
+  }
+
   $('income').value = ''; render();
 };
 
@@ -237,6 +340,118 @@ $('setBaseBtn').onclick = () => {
 $('baseInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') $('setBaseBtn').click();
 });
+
+// ===== NEW: Saving & Personal Functions =====
+function saveBalances() {
+  localStorage.setItem('savingBalance_v1', savingBalance);
+  localStorage.setItem('personalBalance_v1', personalBalance);
+  localStorage.setItem('savingExpenses_v1', JSON.stringify(savingExpenses));
+  localStorage.setItem('personalExpenses_v1', JSON.stringify(personalExpenses));
+}
+
+function renderPots() {
+  if ($('savingBalance')) $('savingBalance').textContent = money(savingBalance);
+  if ($('personalBalance')) $('personalBalance').textContent = money(personalBalance);
+  renderExpenseTable('saving');
+  renderExpenseTable('personal');
+}
+
+function renderExpenseTable(type) {
+  const tbody = type === 'saving' ? $('savingExpensesBody') : $('personalExpensesBody');
+  const list = type === 'saving' ? savingExpenses : personalExpenses;
+  if (!tbody) return;
+
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#687087">Abhi koi kharch nahi hua</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = [...list].reverse().map(exp => `
+    <tr>
+      <td>${exp.date}</td>
+      <td>${money(exp.amount)}</td>
+      <td style="text-align:left">${exp.description || '-'}</td>
+      <td><button class="danger" style="padding:3px 7px;margin:0;font-size:11px" onclick="deleteExpense('${type}', '${exp.id}')">×</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteExpense(type, id) {
+  if (!confirm('Is expense entry ko delete karna hai? (Balance wapas add ho jayega)')) return;
+
+  if (type === 'saving') {
+    const idx = savingExpenses.findIndex(e => e.id === id);
+    if (idx >= 0) {
+      savingBalance += savingExpenses[idx].amount;
+      savingExpenses.splice(idx, 1);
+    }
+  } else {
+    const idx = personalExpenses.findIndex(e => e.id === id);
+    if (idx >= 0) {
+      personalBalance += personalExpenses[idx].amount;
+      personalExpenses.splice(idx, 1);
+    }
+  }
+  saveBalances();
+  renderPots();
+}
+
+// Deduct from Saving
+$('deductSavingBtn').onclick = () => {
+  const date = $('savingDate').value || new Date().toISOString().slice(0,10);
+  const amt = Math.max(1, Number($('savingAmount').value) || 0);
+  const desc = $('savingDesc').value.trim();
+
+  if (amt <= 0) { alert('Amount daalo'); return; }
+  if (amt > savingBalance) { alert('Saving balance se zyada nahi kharch sakte'); return; }
+  if (!desc) { alert('Kahan kharch kiya ye likho'); return; }
+
+  savingBalance -= amt;
+  savingExpenses.push({ id: Date.now().toString(36), date, amount: amt, description: desc });
+  saveBalances();
+
+  $('savingAmount').value = ''; $('savingDesc').value = '';
+  renderPots();
+};
+
+// Deduct from Personal
+$('deductPersonalBtn').onclick = () => {
+  const date = $('personalDate').value || new Date().toISOString().slice(0,10);
+  const amt = Math.max(1, Number($('personalAmount').value) || 0);
+  const desc = $('personalDesc').value.trim();
+
+  if (amt <= 0) { alert('Amount daalo'); return; }
+  if (amt > personalBalance) { alert('Personal balance se zyada nahi kharch sakte'); return; }
+  if (!desc) { alert('Kahan kharch kiya ye likho'); return; }
+
+  personalBalance -= amt;
+  personalExpenses.push({ id: Date.now().toString(36), date, amount: amt, description: desc });
+  saveBalances();
+
+  $('personalAmount').value = ''; $('personalDesc').value = '';
+  renderPots();
+};
+
+// ===== Tab Switching =====
+const pageDaily = $('pageDaily');
+const pagePots = $('pagePots');
+const tabDaily = $('tabDaily');
+const tabPots = $('tabPots');
+
+tabDaily.onclick = () => {
+  pageDaily.style.display = '';
+  pagePots.style.display = 'none';
+  tabDaily.classList.add('active');
+  tabPots.classList.remove('active');
+};
+
+tabPots.onclick = () => {
+  pageDaily.style.display = 'none';
+  pagePots.style.display = '';
+  tabPots.classList.add('active');
+  tabDaily.classList.remove('active');
+  setDefaultPotsDates();
+  renderPots();
+};
 
 // ===== Dark / Light Mode Toggle =====
 function applyTheme(theme) {
