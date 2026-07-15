@@ -1,718 +1,974 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Income Manager v2.0</title>
-<style>
-:root {
-  --bg: #f5f7fb;
-  --card: #fff;
-  --text: #172033;
-  --muted: #687087;
-  --line: #e6e9f0;
-  --accent: #2563eb;
-  --good: #087f5b;
-  --warn: #c2410c;
-  --danger: #b42318;
-}
-body.dark {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --line: #334155;
-  --accent: #3b82f6;
-  --good: #10b981;
-  --warn: #f59e0b;
-  --danger: #ef4444;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
-.wrap{max-width:820px;margin:auto;padding:18px}
-.head{position:relative;margin:8px 0 18px}
-.head h1{margin:0;font-size:26px}
-.head p{margin:6px 0;color:var(--muted)}
-.theme-btn{position:absolute;top:0;right:0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 5px 18px rgba(20,30,55,.05)}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.stat{padding:13px;border:1px solid var(--line);border-radius:14px}
-.stat small{display:block;color:var(--muted);margin-bottom:5px;font-size:12px}
-.stat b{font-size:21px}
-label{display:block;font-weight:650;margin:10px 0 6px;font-size:14px}
-input,select,button{width:100%;font:inherit;border-radius:12px;padding:12px;border:1px solid #d8dde8;background:white;color:var(--text)}
-body.dark input, body.dark select {background:#0f172a;border-color:#475569}
-button{border:0;background:var(--accent);color:white;font-weight:750;cursor:pointer;margin-top:8px}
-button.secondary{background:#eef2ff;color:#1e40af}
-body.dark button.secondary{background:#1e3a8a;color:#bfdbfe}
-button.danger{background:#fff1f2;color:#b42318}
-body.dark button.danger{background:#3f1f1f;color:#fca5a5}
-.result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.result div{background:#f8fafc;border-radius:12px;padding:11px}
-body.dark .result div{background:#334155}
-.result span{display:block;color:var(--muted);font-size:12px}
-.result strong{font-size:18px}
-.tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right}
-th:first-child,td:first-child{text-align:left}
-.note{font-size:12.5px;color:var(--muted);line-height:1.45}
-.good{color:var(--good)}
-.warn{color:var(--warn)}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.monthly-overview .big-number{font-size:26px;font-weight:800}
-.progress-container{height:10px;background:#e2e8f0;border-radius:999px;margin:8px 0;overflow:hidden}
-body.dark .progress-container{background:#475569}
-.progress-bar{height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);transition:width .4s ease}
-body.dark .progress-bar{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
-.cal-header{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:4px 0}
-.cal-day{position:relative;min-height:52px;border:1px solid var(--line);border-radius:10px;padding:4px 5px;font-size:12px;cursor:pointer;transition:all .1s;display:flex;flex-direction:column;justify-content:space-between}
-.cal-day:hover{border-color:var(--accent);transform:scale(1.02)}
-.cal-day.empty{visibility:hidden}
-.cal-day.future{background:#f8fafc;color:#94a3b8}
-body.dark .cal-day.future{background:#1e293b}
-.cal-day.no-record{background:#fefce8}
-.cal-day.met{background:#dcfce7;border-color:#86efac}
-body.dark .cal-day.met{background:#14532d;border-color:#4ade80}
-.cal-day.partial{background:#fef3c7;border-color:#fcd34d}
-body.dark .cal-day.partial{background:#451a03;border-color:#fbbf24}
-.cal-day.missed{background:#fee2e2;border-color:#fca5a5}
-body.dark .cal-day.missed{background:#3f1f1f;border-color:#f87171}
-.cal-date{font-weight:700;font-size:13px}
-.cal-income{font-size:10px;color:var(--muted);margin-top:1px}
-.selected-day{outline:2px solid var(--accent);outline-offset:-2px}
-@media(max-width:520px){
-  .grid,.result{grid-template-columns:1fr 1fr}
-  .actions{grid-template-columns:1fr 1fr}
-  .head h1{font-size:23px}
-  .wrap{padding:12px}
-  .result{grid-template-columns:repeat(2,1fr)}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Income Manager • जुलाई 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+Devanagari:wght@400;500;600&amp;display=swap');
+        
+        :root {
+            --primary: #2563eb;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
+        }
+        
+        .mobile-frame {
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 3rem;
+            overflow: hidden;
+            border: 12px solid #111827;
+        }
+        
+        .app-header {
+            background: linear-gradient(to right, #1e40af, #2563eb);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .nav-tab {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-tab.active {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            font-weight: 600;
+        }
+        
+        .metric-card {
+            transition: transform 0.2s ease;
+        }
+        
+        .metric-card:active {
+            transform: scale(0.98);
+        }
+        
+        .income-input {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .calendar-day {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+        }
+        
+        .calendar-day.has-record {
+            font-weight: 600;
+        }
+        
+        .calendar-day.green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .calendar-day.yellow {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        
+        .calendar-day.red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .record-row {
+            transition: background-color 0.2s ease;
+        }
+        
+        .record-row:hover {
+            background-color: #f8fafc;
+        }
+        
+        .stat-value {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .tail-container {
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="head">
-    <h1>💰 Daily Income Manager <span style="font-size:13px;color:var(--muted);font-weight:400">v2.0</span></h1>
-    <p>Base Need + Monthly Goal • Auto Daily Target • Progress Tracking</p>
-    <button id="themeToggle" class="theme-btn" title="Toggle dark mode">🌙</button>
-  </div>
-
-  <!-- Monthly Goal Overview -->
-  <div class="card monthly-overview">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <h3 style="margin:0">🎯 Monthly Goal</h3>
-      <div id="monthName" style="font-weight:700;color:var(--accent)"></div>
-    </div>
-
-    <div class="grid" style="margin-bottom:6px">
-      <div>
-        <small style="color:var(--muted)">Target</small>
-        <div class="big-number" id="goalTargetBig">₹0</div>
-      </div>
-      <div>
-        <small style="color:var(--muted)">Earned so far</small>
-        <div class="big-number good" id="incomeSoFar">₹0</div>
-      </div>
-    </div>
-
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar" style="width:0%"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
-      <span id="progressText">0%</span>
-      <span id="remainingAmountLabel"><b id="remainingAmount">₹0</b> remaining</span>
-    </div>
-
-    <div class="grid" style="font-size:13px">
-      <div class="stat" style="padding:9px 12px">
-        <small>Working Days</small>
-        <b id="workDaysDone">0 / 22</b>
-      </div>
-      <div class="stat" style="padding:9px 12px">
-        <small>Days Left</small>
-        <b id="workDaysLeft">22</b>
-      </div>
-      <div class="stat" style="padding:9px 12px">
-        <small>Today's Goal Target</small>
-        <b id="todayGoalTarget">₹0</b>
-      </div>
-      <div class="stat" style="padding:9px 12px">
-        <small>Expected Finish</small>
-        <b id="expectedFinish" style="color:var(--accent)">—</b>
-      </div>
-    </div>
-
-    <!-- Goal Settings -->
-    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
-      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div style="flex:1;min-width:120px">
-          <label style="margin:0 0 4px">Monthly Target (₹)</label>
-          <input type="number" id="goalTargetInput" min="0" step="500" placeholder="25000">
+<body class="bg-zinc-950 py-4 px-2">
+    <!-- Mobile Frame -->
+    <div class="mobile-frame bg-white shadow-2xl mx-auto overflow-hidden border border-zinc-800" style="max-width: 420px; border-radius: 2.5rem;">
+        
+        <!-- Header -->
+        <div class="app-header px-5 pt-5 pb-4 text-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-11 h-11 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-wallet text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">Daily Income</h1>
+                        <p class="text-blue-100 text-sm -mt-1">Manager • जुलाई 2026</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs text-blue-200">Today</div>
+                    <div id="header-date" class="font-semibold text-lg">15 Jul</div>
+                </div>
+            </div>
         </div>
-        <div style="flex:1;min-width:100px">
-          <label style="margin:0 0 4px">Total Work Days</label>
-          <input type="number" id="workDaysInput" min="5" max="31" value="22">
+
+        <!-- Tab Navigation -->
+        <div class="bg-white border-b flex">
+            <button onclick="switchTab('daily')" id="tab-daily"
+                    class="nav-tab flex-1 py-3.5 text-sm font-medium flex items-center justify-center gap-x-2 active text-blue-600 border-b-2 border-blue-600">
+                <i class="fa-solid fa-plus"></i>
+                <span class="font-semibold">Daily</span>
+            </button>
+            <button onclick="switchTab('goal')" id="tab-goal"
+                    class="nav-tab flex-1 py-3.5 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-600 hover:text-zinc-800">
+                <i class="fa-solid fa-bullseye"></i>
+                <span class="font-semibold">Goal</span>
+            </button>
+            <button onclick="switchTab('calendar')" id="tab-calendar"
+                    class="nav-tab flex-1 py-3.5 text-sm font-medium flex items-center justify-center gap-x-2 text-zinc-600 hover:text-zinc-800">
+                <i class="fa-solid fa-calendar"></i>
+                <span class="font-semibold">Calendar</span>
+            </button>
         </div>
-        <div style="flex:0 0 auto">
-          <button id="saveGoalBtn" class="secondary" style="margin-top:22px;padding:10px 18px">Save Goal</button>
+
+        <!-- ==================== DAILY TAB ==================== -->
+        <div id="daily-tab" class="section active p-4 bg-zinc-50 min-h-[620px]">
+            
+            <!-- Top Metrics -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <!-- Base Daily Need -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-zinc-500 font-medium">Base Daily Need</div>
+                            <div class="flex items-baseline gap-x-1 mt-1">
+                                <span class="text-3xl font-bold text-zinc-900">₹</span>
+                                <input id="base-need" type="number" value="700" 
+                                       class="w-20 text-3xl font-bold text-zinc-900 bg-transparent focus:outline-none"
+                                       onchange="updateBaseNeed()">
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-coins text-2xl text-amber-500"></i>
+                    </div>
+                </div>
+
+                <!-- Pending Shortfall -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-zinc-500 font-medium">Pending Shortfall</div>
+                            <div id="pending-shortfall" class="text-3xl font-bold text-red-600 mt-1">₹0</div>
+                        </div>
+                        <i class="fa-solid fa-exclamation-triangle text-2xl text-red-400"></i>
+                    </div>
+                </div>
+
+                <!-- Today's Target -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100 col-span-1">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-zinc-500 font-medium">Today's Target</div>
+                            <div id="today-target" class="text-3xl font-bold text-zinc-900 mt-1">₹700</div>
+                        </div>
+                        <i class="fa-solid fa-crosshairs text-2xl text-blue-500"></i>
+                    </div>
+                </div>
+
+                <!-- Total Saving -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-zinc-500 font-medium">Total Saving (70%)</div>
+                            <div id="total-saving" class="text-3xl font-bold text-emerald-600 mt-1">₹0</div>
+                        </div>
+                        <i class="fa-solid fa-piggy-bank text-2xl text-emerald-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date & Day Type -->
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100 mb-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-medium text-zinc-500 block mb-1.5">Date</label>
+                        <input id="entry-date" type="date" value="2026-07-15"
+                               class="w-full px-3 py-2.5 text-sm border border-zinc-200 rounded-2xl focus:outline-none focus:border-blue-400">
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-zinc-500 block mb-1.5">Day Type</label>
+                        <select id="day-type" onchange="calculateLive()"
+                                class="w-full px-3 py-2.5 text-sm border border-zinc-200 rounded-2xl focus:outline-none focus:border-blue-400 bg-white">
+                            <option value="Working Day">Working Day</option>
+                            <option value="Off Day">Off Day</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income Input -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-zinc-100 mb-4">
+                <label class="text-xs font-semibold text-zinc-500 tracking-wider block mb-2">TODAY'S INCOME (₹)</label>
+                <div class="relative">
+                    <span class="absolute left-5 top-4 text-2xl font-bold text-zinc-400">₹</span>
+                    <input id="income-input" type="number" placeholder="जैसे 1000" 
+                           class="income-input w-full pl-10 pr-5 py-3.5 border-2 border-zinc-200 focus:border-blue-500 rounded-3xl text-3xl font-bold focus:outline-none"
+                           oninput="calculateLive()">
+                </div>
+                <p class="text-[10px] text-zinc-400 mt-2 px-1">Enter your today's earning. Calculations will update live.</p>
+            </div>
+
+            <!-- Live Calculations -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Need Used</div>
+                    <div id="need-used" class="text-2xl font-bold text-zinc-800 mt-1">₹0</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="text-xs text-zinc-500">New Shortfall</div>
+                    <div id="new-shortfall" class="text-2xl font-bold text-red-600 mt-1">₹0</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Extra Income</div>
+                    <div id="extra-income" class="text-2xl font-bold text-emerald-600 mt-1">₹0</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-zinc-100">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="text-xs text-zinc-500">Saving 70%</div>
+                            <div id="saving-70" class="text-xl font-bold text-emerald-600">₹0</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-zinc-500">Personal 30%</div>
+                            <div id="personal-30" class="text-xl font-bold text-amber-600">₹0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <button onclick="saveRecord()"
+                    class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-all text-white font-bold py-4 rounded-3xl text-lg flex items-center justify-center gap-x-2 shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-save"></i>
+                <span>Save Record</span>
+            </button>
+
+            <!-- Note -->
+            <div class="mt-3 px-1">
+                <p class="text-[10px] leading-snug text-zinc-500">
+                    Working Day पर target = ₹700 + pending shortfall. 
+                    Off Day पर नया 700 target नहीं जुड़ता। Extra income का 70% saving + 30% personal।
+                </p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex gap-2 mt-4">
+                <button onclick="switchTab('calendar')" 
+                        class="flex-1 text-xs py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-2xl font-medium flex items-center justify-center gap-x-1.5 hover:bg-zinc-50">
+                    <i class="fa-solid fa-calendar text-xs"></i>
+                    <span>View Calendar</span>
+                </button>
+                <button onclick="clearIncomeInput()" 
+                        class="flex-1 text-xs py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-2xl font-medium flex items-center justify-center gap-x-1.5 hover:bg-zinc-50">
+                    <i class="fa-solid fa-eraser text-xs"></i>
+                    <span>Clear</span>
+                </button>
+            </div>
         </div>
-      </div>
-      <p class="note" style="margin:6px 0 0">Goal set karein. App khud roz ka target calculate karega (Remaining ÷ Work Days Left).</p>
+
+        <!-- ==================== GOAL TAB ==================== -->
+        <div id="goal-tab" class="section p-4 bg-zinc-50 min-h-[620px]">
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-zinc-100 mb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-bullseye text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-xl">Monthly Goal</div>
+                            <div class="text-xs text-zinc-500">जुलाई 2026</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-zinc-500">Target</div>
+                        <div id="goal-target-header" class="font-bold text-2xl text-zinc-900">₹15,000</div>
+                    </div>
+                </div>
+
+                <!-- Earned vs Target -->
+                <div class="flex justify-between items-end mb-2">
+                    <div>
+                        <div class="text-xs text-zinc-500">Earned so far</div>
+                        <div id="earned-so-far" class="text-4xl font-bold text-emerald-600">₹6,300</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-zinc-500">Remaining</div>
+                        <div id="goal-remaining" class="text-xl font-semibold text-zinc-700">₹8,700</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="h-3 bg-zinc-100 rounded-full overflow-hidden mb-1.5">
+                    <div id="progress-bar" class="progress-bar h-3 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full" 
+                         style="width: 42%"></div>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <div class="font-medium text-blue-600"><span id="progress-percent">42</span>%</div>
+                    <div class="text-zinc-500"><span id="days-left">13</span> days left</div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-white rounded-3xl p-4 border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Working Days</div>
+                    <div class="flex items-baseline gap-x-1 mt-1">
+                        <span id="working-days-done" class="text-4xl font-bold text-zinc-900">2</span>
+                        <span class="text-xl text-zinc-400">/ <span id="total-work-days">15</span></span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Days Left</div>
+                    <div id="days-left-big" class="text-4xl font-bold text-zinc-900 mt-1">13</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Today's Goal Target</div>
+                    <div id="today-goal-target" class="text-3xl font-bold text-blue-600 mt-1">₹893</div>
+                </div>
+                <div class="bg-white rounded-3xl p-4 border border-zinc-100">
+                    <div class="text-xs text-zinc-500">Expected Finish</div>
+                    <div id="expected-finish" class="text-3xl font-bold text-emerald-600 mt-1">18 Jul</div>
+                </div>
+            </div>
+
+            <!-- Edit Goal -->
+            <div class="bg-white rounded-3xl p-5 border border-zinc-100">
+                <div class="text-sm font-semibold text-zinc-700 mb-3">Set / Update Monthly Goal</div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-zinc-500 block mb-1">Monthly Target (₹)</label>
+                        <input id="monthly-target-input" type="number" value="15000"
+                               class="w-full px-4 py-2.5 border border-zinc-200 rounded-2xl text-lg font-semibold focus:outline-none focus:border-blue-400">
+                    </div>
+                    <div>
+                        <label class="text-xs text-zinc-500 block mb-1">Total Work Days</label>
+                        <input id="total-work-days-input" type="number" value="15"
+                               class="w-full px-4 py-2.5 border border-zinc-200 rounded-2xl text-lg font-semibold focus:outline-none focus:border-blue-400">
+                    </div>
+                </div>
+                
+                <button onclick="saveGoalSettings()"
+                        class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-2xl flex items-center justify-center gap-x-2">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Save Goal</span>
+                </button>
+                
+                <p class="text-[10px] text-zinc-500 mt-3 leading-snug">
+                    Goal set करने के बाद app खुद रोज का target calculate करेगा (Remaining ÷ Work Days Left).
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================== CALENDAR TAB ==================== -->
+        <div id="calendar-tab" class="section p-4 bg-zinc-50 min-h-[620px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <div>
+                    <div class="font-bold text-xl">Calendar View</div>
+                    <div class="text-xs text-zinc-500">जुलाई 2026</div>
+                </div>
+                <div class="flex items-center gap-x-1 text-xs">
+                    <div class="flex items-center gap-x-1 bg-white px-2.5 py-1 rounded-2xl border border-zinc-100">
+                        <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></div>
+                        <span class="text-emerald-700 text-xs font-medium">Met</span>
+                    </div>
+                    <div class="flex items-center gap-x-1 bg-white px-2.5 py-1 rounded-2xl border border-zinc-100">
+                        <div class="w-2.5 h-2.5 bg-amber-400 rounded-full"></div>
+                        <span class="text-amber-700 text-xs font-medium">Partial</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="bg-white rounded-3xl p-3 shadow-sm border border-zinc-100">
+                <!-- Weekday Headers -->
+                <div class="grid grid-cols-7 text-center text-xs font-medium text-zinc-400 mb-1">
+                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                </div>
+                
+                <!-- Calendar Days Grid -->
+                <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-sm">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="mt-4 px-1">
+                <div class="text-xs text-zinc-500 flex items-center gap-x-2">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <span>Tap any day to edit that day's record</span>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="mt-4 flex justify-center gap-x-4 text-xs">
+                <div class="flex items-center gap-x-1.5">
+                    <div class="w-3 h-3 rounded bg-emerald-400"></div>
+                    <span class="text-emerald-700">Target met</span>
+                </div>
+                <div class="flex items-center gap-x-1.5">
+                    <div class="w-3 h-3 rounded bg-amber-400"></div>
+                    <span class="text-amber-700">Partial income</span>
+                </div>
+                <div class="flex items-center gap-x-1.5">
+                    <div class="w-3 h-3 rounded bg-zinc-300"></div>
+                    <span class="text-zinc-500">No record</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar / Data Management -->
+        <div class="bg-white border-t px-4 py-3 flex items-center justify-between text-xs">
+            <div class="flex gap-x-1">
+                <button onclick="exportBackup()" 
+                        class="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-2xl flex items-center gap-x-1 text-xs font-medium">
+                    <i class="fa-solid fa-download text-xs"></i>
+                    <span>Backup</span>
+                </button>
+                <button onclick="importBackup()" 
+                        class="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-2xl flex items-center gap-x-1 text-xs font-medium">
+                    <i class="fa-solid fa-upload text-xs"></i>
+                    <span>Restore</span>
+                </button>
+            </div>
+            <button onclick="clearAllData()" 
+                    class="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-2xl flex items-center gap-x-1 text-xs font-medium">
+                <i class="fa-solid fa-trash text-xs"></i>
+                <span>Clear All</span>
+            </button>
+        </div>
+        
     </div>
-  </div>
 
-  <!-- Top Quick Stats -->
-  <div class="card">
-    <div class="grid">
-      <div class="stat"><small>Base Daily Need</small><b>₹700</b></div>
-      <div class="stat"><small>Pending Shortfall</small><b id="pendingTop">₹0</b></div>
-      <div class="stat"><small>Today's Target (Effective)</small><b id="targetTop">₹700</b></div>
-      <div class="stat"><small>Total Saving (70%)</small><b class="good" id="savingTop">₹0</b></div>
-    </div>
-  </div>
-
-  <!-- Daily Entry -->
-  <div class="card">
-    <label for="date">Date</label>
-    <input type="date" id="date">
-
-    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:4px">
-      <div>
-        <label for="dayType">Day Type</label>
-        <select id="dayType">
-          <option value="work">Working Day</option>
-          <option value="off">Off Day</option>
-        </select>
-      </div>
-      <div>
-        <label for="income">Today's Income (₹)</label>
-        <input type="number" id="income" min="0" step="1" placeholder="जैसे 1200" inputmode="numeric">
-      </div>
-    </div>
-
-    <!-- Live Calculation -->
-    <div style="margin:12px 0 4px">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Target Breakdown</div>
-      <div class="result" style="grid-template-columns:repeat(3,1fr);margin-top:0">
-        <div><span>Base Need Target</span><strong id="rBase">₹700</strong></div>
-        <div><span>Monthly Goal Daily</span><strong id="rMonthly">₹0</strong></div>
-        <div style="background:#ecfdf5;border:1px solid #a7f3d0"><span style="color:#166534">Final Effective Target</span><strong id="rTarget" style="color:#166534">₹700</strong></div>
-      </div>
-    </div>
-
-    <div class="result">
-      <div><span>Need Used</span><strong id="rNeed">₹0</strong></div>
-      <div><span>New Shortfall</span><strong class="warn" id="rShort">₹0</strong></div>
-      <div><span>Extra Income</span><strong id="rExtra">₹0</strong></div>
-      <div><span>Saving (70%)</span><strong class="good" id="rSave">₹0</strong></div>
-      <div><span>Personal (30%)</span><strong id="rPersonal">₹0</strong></div>
-      <div><span>Income vs Target</span><strong id="rDiff">₹0</strong></div>
-    </div>
-
-    <button id="saveBtn">Save Record</button>
-    <p class="note">
-      Final Target = Max(Base Need + Pending, Monthly Goal Daily).<br>
-      Shortfall carry-forward effective target के हिसाब से होता है। Off day पर नया base नहीं जुड़ता।
-    </p>
-  </div>
-
-  <!-- Monthly Summary -->
-  <div class="card">
-    <h3>📊 Monthly Summary</h3>
-    <div class="grid">
-      <div class="stat"><small>Total Income</small><b id="sumIncome">₹0</b></div>
-      <div class="stat"><small>Total Need Used</small><b id="sumNeed">₹0</b></div>
-      <div class="stat"><small>Total Saving (70%)</small><b class="good" id="sumSave">₹0</b></div>
-      <div class="stat"><small>Total Personal (30%)</small><b id="sumPersonal">₹0</b></div>
-    </div>
-  </div>
-
-  <!-- Calendar View -->
-  <div class="card">
-    <h3 style="margin:0 0 8px">📅 Calendar View <span id="calMonthLabel" style="font-size:13px;color:var(--muted)"></span></h3>
-    <div class="calendar-grid" id="calendarGrid"></div>
-    <div style="margin-top:8px;font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap">
-      <span><span style="color:#166534">🟢</span> Target met</span>
-      <span><span style="color:#854d0e">🟡</span> Partial income</span>
-      <span><span style="color:#9f1239">🔴</span> Shortfall / Missed</span>
-      <span><span style="color:#a3a3a3">⚪</span> No record</span>
-    </div>
-  </div>
-
-  <!-- Saved Records -->
-  <div class="card">
-    <h3>Saved Records</h3>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Date</th><th>Income</th><th>Target</th><th>Shortfall</th><th>70%</th><th>30%</th><th></th></tr></thead>
-        <tbody id="records"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Actions -->
-  <div class="card">
-    <div class="actions">
-      <button class="secondary" id="exportBtn">Backup JSON</button>
-      <button id="csvBtn">Export CSV</button>
-      <button class="danger" id="clearBtn">Clear All Data</button>
-    </div>
-    <label for="importFile" style="margin-top:12px">Restore Backup (JSON)</label>
-    <input type="file" id="importFile" accept=".json,application/json">
-  </div>
-</div>
-
-<script>
-// ==================== CONFIG & STATE ====================
-const BASE = 700;
-const KEY = 'dailyIncomeManager_v2';
-const GOAL_KEY = 'dailyIncomeManager_goals_v2';
-
-let data = JSON.parse(localStorage.getItem(KEY) || '[]');
-let monthlySettings = JSON.parse(localStorage.getItem(GOAL_KEY) || '{}');
-
-const $ = id => document.getElementById(id);
-const money = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
-
-// ==================== HELPERS ====================
-function getMonthKey(dateStr) {
-  return dateStr.slice(0, 7); // YYYY-MM
-}
-
-function getMonthSettings(monthKey) {
-  if (!monthlySettings[monthKey]) {
-    monthlySettings[monthKey] = { target: 0, totalWorkDays: 22 };
-  }
-  return monthlySettings[monthKey];
-}
-
-function saveMonthlySettings() {
-  localStorage.setItem(GOAL_KEY, JSON.stringify(monthlySettings));
-}
-
-function ordered() {
-  return [...data].sort((a, b) => a.date.localeCompare(b.date) || (a.created || 0) - (b.created || 0));
-}
-
-function getMonthName(monthKey) {
-  const d = new Date(monthKey + '-01');
-  return d.toLocaleString('hi-IN', { month: 'long', year: 'numeric' });
-}
-
-// Calculate monthly daily target for a specific date (income before this date only)
-function calculateMonthlyDailyTarget(dateStr, snapshot = data) {
-  const monthKey = getMonthKey(dateStr);
-  const settings = getMonthSettings(monthKey);
-  const goal = settings.target || 0;
-  if (goal <= 0) return 0;
-
-  const prevIncome = snapshot
-    .filter(r => getMonthKey(r.date) === monthKey && r.date < dateStr)
-    .reduce((sum, r) => sum + (r.income || 0), 0);
-
-  const remaining = Math.max(0, goal - prevIncome);
-
-  const workDone = snapshot
-    .filter(r => getMonthKey(r.date) === monthKey && r.date < dateStr && r.type === 'work')
-    .length;
-
-  const totalWD = settings.totalWorkDays || 22;
-  const remainingWD = Math.max(1, totalWD - workDone);
-  return Math.ceil(remaining / remainingWD);
-}
-
-// Expected finish date based on average daily income so far
-function getExpectedFinish(monthKey) {
-  const settings = getMonthSettings(monthKey);
-  const goal = settings.target || 0;
-  if (!goal) return null;
-
-  const monthRecs = data.filter(r => getMonthKey(r.date) === monthKey);
-  if (monthRecs.length === 0) return null;
-
-  const incomeSoFar = monthRecs.reduce((s, r) => s + r.income, 0);
-  const remaining = Math.max(0, goal - incomeSoFar);
-  if (remaining <= 0) return '🎉 Goal Complete!';
-
-  const workDone = monthRecs.filter(r => r.type === 'work').length;
-  if (workDone === 0) return null;
-
-  const avg = incomeSoFar / workDone;
-  if (avg <= 0) return null;
-
-  const daysNeeded = Math.ceil(remaining / avg);
-  const base = new Date();
-  base.setDate(base.getDate() + daysNeeded);
-  return base.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-}
-
-// ==================== CORE LOGIC ( upgraded ) ====================
-function stateBefore(date) {
-  let pending = 0;
-  for (const r of ordered()) {
-    if (r.date >= date) break;
-    pending = r.shortfall || 0;
-  }
-  return pending;
-}
-
-function recompute() {
-  let pending = 0;
-  const snapshot = [...data]; // incomes unchanged
-
-  data = ordered().map(r => {
-    const monthlyD = calculateMonthlyDailyTarget(r.date, snapshot);
-    const baseT = r.type === 'work' ? BASE + pending : pending;
-    const target = Math.max(baseT, monthlyD);
-
-    const need = Math.min(r.income || 0, target);
-    const shortfall = Math.max(0, target - (r.income || 0));
-    const extra = Math.max(0, (r.income || 0) - target);
-    const save = Math.round(extra * 0.7);
-    const personal = extra - save;
-
-    pending = shortfall;
-    return { ...r, target, need, shortfall, extra, save, personal };
-  });
-
-  localStorage.setItem(KEY, JSON.stringify(data));
-}
-
-function calc() {
-  const date = $('date').value;
-  const type = $('dayType').value;
-  const income = Math.max(0, Number($('income').value) || 0);
-
-  if (!date) return;
-
-  const prevPending = stateBefore(date);
-  const monthlyD = calculateMonthlyDailyTarget(date);
-  const baseT = type === 'work' ? BASE + prevPending : prevPending;
-  const target = Math.max(baseT, monthlyD);
-
-  const need = Math.min(income, target);
-  const shortfall = Math.max(0, target - income);
-  const extra = Math.max(0, income - target);
-  const save = Math.round(extra * 0.7);
-  const personal = extra - save;
-  const diff = income - target;
-
-  // Update result fields
-  $('rBase').textContent = money(baseT);
-  $('rMonthly').textContent = money(monthlyD);
-  $('rTarget').textContent = money(target);
-  $('rNeed').textContent = money(need);
-  $('rShort').textContent = money(shortfall);
-  $('rExtra').textContent = money(extra);
-  $('rSave').textContent = money(save);
-  $('rPersonal').textContent = money(personal);
-  $('rDiff').textContent = (diff >= 0 ? '+' : '') + money(diff);
-
-  // Update top bar
-  $('pendingTop').textContent = money(prevPending);
-  $('targetTop').textContent = money(target);
-
-  updateSaveButton();
-}
-
-function render() {
-  recompute();
-
-  const rows = ordered();
-  const pending = rows.length ? rows[rows.length - 1].shortfall : 0;
-
-  // Top stats
-  $('pendingTop').textContent = money(pending);
-  $('targetTop').textContent = money(BASE + pending);
-  $('savingTop').textContent = money(rows.reduce((s, r) => s + (r.save || 0), 0));
-
-  // Monthly summary
-  $('sumIncome').textContent = money(rows.reduce((s, r) => s + (r.income || 0), 0));
-  $('sumNeed').textContent = money(rows.reduce((s, r) => s + (r.need || 0), 0));
-  $('sumSave').textContent = money(rows.reduce((s, r) => s + (r.save || 0), 0));
-  $('sumPersonal').textContent = money(rows.reduce((s, r) => s + (r.personal || 0), 0));
-
-  // Records table
-  $('records').innerHTML = rows.length
-    ? [...rows].reverse().map(r => `
-      <tr>
-        <td>${r.date}</td>
-        <td>${money(r.income)}</td>
-        <td>${money(r.target)}</td>
-        <td class="${r.shortfall > 0 ? 'warn' : ''}">${money(r.shortfall)}</td>
-        <td class="good">${money(r.save)}</td>
-        <td>${money(r.personal)}</td>
-        <td><button class="danger" style="padding:4px 8px;margin:0;font-size:12px" onclick="delRec('${r.id}')">×</button></td>
-      </tr>`).join('')
-    : '<tr><td colspan="7" style="text-align:center;color:#687087">अभी कोई record नहीं है</td></tr>';
-
-  // Update monthly overview + calendar for current form date
-  updateMonthlyOverview();
-  const currentMonthKey = getMonthKey($('date').value || new Date().toISOString().slice(0,10));
-  renderCalendar(currentMonthKey);
-
-  calc();
-}
-
-function delRec(id) {
-  if (!confirm('इस record को delete करें?')) return;
-  data = data.filter(r => r.id !== id);
-  render();
-}
-
-function updateSaveButton() {
-  const date = $('date').value;
-  const exists = data.some(x => x.date === date);
-  const btn = $('saveBtn');
-  btn.textContent = exists ? 'Update Record' : 'Save Record';
-  btn.classList.toggle('secondary', exists);
-}
-
-function loadRecordForDate(dateStr) {
-  const rec = data.find(r => r.date === dateStr);
-  if (rec) {
-    $('income').value = rec.income;
-    $('dayType').value = rec.type || 'work';
-  }
-  // If no record, keep whatever is in income field (for new entry preview)
-}
-
-function updateMonthlyOverview() {
-  const dateVal = $('date').value || new Date().toISOString().slice(0,10);
-  const monthKey = getMonthKey(dateVal);
-  const settings = getMonthSettings(monthKey);
-  const goal = settings.target || 0;
-
-  // Month label
-  $('monthName').textContent = getMonthName(monthKey);
-  $('calMonthLabel').textContent = getMonthName(monthKey);
-
-  // Goal inputs prefill
-  $('goalTargetInput').value = goal || '';
-  $('workDaysInput').value = settings.totalWorkDays || 22;
-
-  const monthRecs = data.filter(r => getMonthKey(r.date) === monthKey);
-  const totalIncome = monthRecs.reduce((s, r) => s + (r.income || 0), 0);
-
-  const pct = goal > 0 ? Math.min(100, Math.round((totalIncome / goal) * 100)) : 0;
-
-  $('goalTargetBig').textContent = money(goal);
-  $('incomeSoFar').textContent = money(totalIncome);
-  $('progressBar').style.width = pct + '%';
-  $('progressText').textContent = pct + '%';
-  $('remainingAmount').textContent = money(Math.max(0, goal - totalIncome));
-
-  const workDone = monthRecs.filter(r => r.type === 'work').length;
-  const totalWD = settings.totalWorkDays || 22;
-  $('workDaysDone').textContent = `${workDone} / ${totalWD}`;
-  $('workDaysLeft').textContent = Math.max(0, totalWD - workDone);
-
-  // Today's goal target (for selected date)
-  const monthlyD = calculateMonthlyDailyTarget(dateVal);
-  $('todayGoalTarget').textContent = money(monthlyD);
-
-  // Expected finish
-  const finish = getExpectedFinish(monthKey);
-  $('expectedFinish').textContent = finish || '—';
-}
-
-// ==================== CALENDAR ====================
-function renderCalendar(monthKey) {
-  const container = $('calendarGrid');
-  container.innerHTML = '';
-
-  const [year, month] = monthKey.split('-').map(Number);
-  const firstDay = new Date(year, month - 1, 1).getDay();
-  const lastDate = new Date(year, month, 0).getDate();
-  const todayStr = new Date().toISOString().slice(0, 10);
-
-  // Header
-  ['S','M','T','W','T','F','S'].forEach(d => {
-    const h = document.createElement('div');
-    h.className = 'cal-header';
-    h.textContent = d;
-    container.appendChild(h);
-  });
-
-  // Empty before first day
-  for (let i = 0; i < firstDay; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'cal-day empty';
-    container.appendChild(empty);
-  }
-
-  for (let d = 1; d <= lastDate; d++) {
-    const dateStr = `${monthKey}-${String(d).padStart(2, '0')}`;
-    const rec = data.find(r => r.date === dateStr);
-
-    const dayEl = document.createElement('div');
-    dayEl.className = 'cal-day';
-    dayEl.dataset.date = dateStr;
-
-    let html = `<div class="cal-date">${d}</div>`;
-
-    if (rec) {
-      const met = rec.shortfall === 0 && rec.income >= rec.target;
-      if (met) {
-        dayEl.classList.add('met');
-        html += `<div class="cal-income">${money(rec.income).replace('₹','')}</div>✅`;
-      } else if (rec.income > 0) {
-        dayEl.classList.add('partial');
-        html += `<div class="cal-income">${money(rec.income).replace('₹','')}</div>`;
-      } else {
-        dayEl.classList.add('missed');
-        html += `<div class="cal-income">0</div>❌`;
-      }
-    } else {
-      if (dateStr > todayStr) {
-        dayEl.classList.add('future');
-      } else {
-        dayEl.classList.add('no-record');
-      }
-      html += `<div class="cal-income" style="opacity:0.4">—</div>`;
-    }
-
-    dayEl.innerHTML = html;
-
-    dayEl.onclick = () => {
-      $('date').value = dateStr;
-      loadRecordForDate(dateStr);
-      calc();
-      // Re-render calendar to show selection (simple way)
-      renderCalendar(monthKey);
-    };
-
-    container.appendChild(dayEl);
-  }
-}
-
-// ==================== EVENT LISTENERS ====================
-$('income').addEventListener('input', calc);
-$('date').addEventListener('change', () => {
-  loadRecordForDate($('date').value);
-  calc();
-  updateMonthlyOverview();
-  const mk = getMonthKey($('date').value);
-  renderCalendar(mk);
-});
-$('dayType').addEventListener('change', calc);
-
-$('saveBtn').onclick = () => {
-  if (!$('date').value) { alert('Date चुनें'); return; }
-  if ($('income').value === '') { alert('Income डालें'); return; }
-
-  const r = {
-    date: $('date').value,
-    type: $('dayType').value,
-    income: Math.max(0, Number($('income').value) || 0),
-    created: Date.now()
-  };
-
-  const existingIndex = data.findIndex(x => x.date === r.date);
-  if (existingIndex >= 0) {
-    if (!confirm('इस date का record पहले से है। Update करें?')) return;
-    r.id = data[existingIndex].id;
-    r.created = data[existingIndex].created;
-    data[existingIndex] = r;
-  } else {
-    r.id = Date.now().toString();
-    data.push(r);
-  }
-
-  $('income').value = '';
-  render();
-};
-
-$('clearBtn').onclick = () => {
-  if (confirm('सारा data delete करना है?')) {
-    data = [];
-    localStorage.removeItem(KEY);
-    render();
-  }
-};
-
-$('exportBtn').onclick = () => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `income-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
-
-$('csvBtn').onclick = () => {
-  if (!data.length) { alert('कोई data नहीं है'); return; }
-  let csv = 'Date,Type,Income,Target,Need,Shortfall,Extra,Save70,Personal30\n';
-  ordered().forEach(r => {
-    csv += `${r.date},${r.type},${r.income},${r.target},${r.need},${r.shortfall},${r.extra},${r.save},${r.personal}\n`;
-  });
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `income-report-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
-
-$('importFile').onchange = e => {
-  const f = e.target.files[0];
-  if (!f) return;
-  const rd = new FileReader();
-  rd.onload = () => {
-    try {
-      const x = JSON.parse(rd.result);
-      if (!Array.isArray(x)) throw new Error('Invalid');
-      data = x;
-      render();
-      alert('Backup restored successfully!');
-    } catch {
-      alert('Invalid backup file');
-    }
-  };
-  rd.readAsText(f);
-};
-
-// Goal save
-$('saveGoalBtn').onclick = () => {
-  const dateVal = $('date').value || new Date().toISOString().slice(0,10);
-  const monthKey = getMonthKey(dateVal);
-  const targetVal = parseInt($('goalTargetInput').value) || 0;
-  const wdVal = parseInt($('workDaysInput').value) || 22;
-
-  monthlySettings[monthKey] = { target: targetVal, totalWorkDays: wdVal };
-  saveMonthlySettings();
-  render();
-  alert('Monthly goal saved for ' + getMonthName(monthKey));
-};
-
-// ==================== INIT ====================
-// Set today's date
-const today = new Date().toISOString().slice(0, 10);
-$('date').value = today;
-
-// Theme
-let isDark = localStorage.getItem('theme') === 'dark';
-if (isDark) document.body.classList.add('dark');
-$('themeToggle').textContent = isDark ? '☀️' : '🌙';
-$('themeToggle').onclick = () => {
-  isDark = !isDark;
-  document.body.classList.toggle('dark', isDark);
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
-};
-
-// Initial render
-render();
-
-// Bonus: if no goal set for current month, gently suggest
-setTimeout(() => {
-  const mk = getMonthKey(today);
-  if (!monthlySettings[mk] || !monthlySettings[mk].target) {
-    // do nothing, user can set when ready
-  }
-}, 1200);
-</script>
+    <script>
+        // ==================== GLOBAL STATE ====================
+        let records = [];
+        let pendingShortfall = 0;
+        let baseDailyNeed = 700;
+        let monthlyTarget = 15000;
+        let totalWorkDays = 15;
+
+        // Load from localStorage
+        function loadData() {
+            const savedRecords = localStorage.getItem('dim_records');
+            if (savedRecords) records = JSON.parse(savedRecords);
+            
+            const savedPending = localStorage.getItem('dim_pending');
+            if (savedPending) pendingShortfall = parseInt(savedPending);
+            
+            const savedBase = localStorage.getItem('dim_base');
+            if (savedBase) baseDailyNeed = parseInt(savedBase);
+            
+            const savedMonthly = localStorage.getItem('dim_monthlyTarget');
+            if (savedMonthly) monthlyTarget = parseInt(savedMonthly);
+            
+            const savedWorkDays = localStorage.getItem('dim_totalWorkDays');
+            if (savedWorkDays) totalWorkDays = parseInt(savedWorkDays);
+            
+            // Seed demo data if empty (for July 2026)
+            if (records.length === 0) {
+                records = [
+                    {
+                        date: "2026-07-14",
+                        income: 2500,
+                        dayType: "Working Day",
+                        target: 700,
+                        shortfall: 0,
+                        extra: 1800,
+                        saving: 1260,
+                        personal: 540
+                    },
+                    {
+                        date: "2026-07-15",
+                        income: 3800,
+                        dayType: "Working Day",
+                        target: 700,
+                        shortfall: 0,
+                        extra: 3100,
+                        saving: 2170,
+                        personal: 930
+                    }
+                ];
+                pendingShortfall = 0;
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('dim_records', JSON.stringify(records));
+            localStorage.setItem('dim_pending', pendingShortfall.toString());
+            localStorage.setItem('dim_base', baseDailyNeed.toString());
+            localStorage.setItem('dim_monthlyTarget', monthlyTarget.toString());
+            localStorage.setItem('dim_totalWorkDays', totalWorkDays.toString());
+        }
+
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tab) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            // Deactivate all tabs
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.classList.remove('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
+                t.classList.add('text-zinc-600');
+            });
+            
+            // Show selected
+            document.getElementById(tab + '-tab').classList.add('active');
+            
+            // Activate tab button
+            const activeTab = document.getElementById('tab-' + tab);
+            activeTab.classList.add('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
+            activeTab.classList.remove('text-zinc-600');
+            
+            // Refresh data when switching
+            if (tab === 'goal') {
+                updateGoalTab();
+            }
+            if (tab === 'calendar') {
+                renderCalendar();
+            }
+            if (tab === 'daily') {
+                calculateLive();
+            }
+        }
+
+        // ==================== DAILY TAB LOGIC ====================
+        function updateBaseNeed() {
+            const input = document.getElementById('base-need');
+            baseDailyNeed = parseInt(input.value) || 700;
+            saveToLocalStorage();
+            calculateLive();
+        }
+
+        function calculateLive() {
+            const income = parseFloat(document.getElementById('income-input').value) || 0;
+            const dayType = document.getElementById('day-type').value;
+            const dateVal = document.getElementById('entry-date').value;
+            
+            let target = 0;
+            
+            if (dayType === 'Working Day') {
+                target = baseDailyNeed + pendingShortfall;
+            } else {
+                target = pendingShortfall; // Off day - no new base added
+            }
+            
+            const needUsed = Math.min(income, target);
+            const newShortfall = Math.max(0, target - income);
+            const extraIncome = Math.max(0, income - target);
+            const saving70 = Math.round(extraIncome * 0.7);
+            const personal30 = extraIncome - saving70; // avoid rounding issues
+            
+            // Update UI
+            document.getElementById('today-target').innerHTML = `₹${target}`;
+            document.getElementById('need-used').innerHTML = `₹${needUsed}`;
+            document.getElementById('new-shortfall').innerHTML = `₹${newShortfall}`;
+            document.getElementById('new-shortfall').className = newShortfall > 0 
+                ? 'text-2xl font-bold text-red-600 mt-1' 
+                : 'text-2xl font-bold text-emerald-600 mt-1';
+            
+            document.getElementById('extra-income').innerHTML = `₹${extraIncome}`;
+            document.getElementById('saving-70').innerHTML = `₹${saving70}`;
+            document.getElementById('personal-30').innerHTML = `₹${personal30}`;
+            
+            // Store temporarily for save
+            window.currentCalculation = {
+                income, target, needUsed, newShortfall, extraIncome, saving70, personal30, dayType, date: dateVal
+            };
+        }
+
+        function saveRecord() {
+            if (!window.currentCalculation) {
+                alert("Please enter income first!");
+                return;
+            }
+            
+            const calc = window.currentCalculation;
+            const date = calc.date || document.getElementById('entry-date').value;
+            
+            // Check if record for this date already exists → update it
+            const existingIndex = records.findIndex(r => r.date === date);
+            
+            const newRecord = {
+                date: date,
+                income: calc.income,
+                dayType: calc.dayType,
+                target: calc.target,
+                shortfall: calc.newShortfall,
+                extra: calc.extraIncome,
+                saving: calc.saving70,
+                personal: calc.personal30
+            };
+            
+            if (existingIndex !== -1) {
+                // Update existing
+                records[existingIndex] = newRecord;
+            } else {
+                records.push(newRecord);
+            }
+            
+            // Update pending shortfall (carry forward)
+            pendingShortfall = calc.newShortfall;
+            
+            // Save everything
+            saveToLocalStorage();
+            
+            // Refresh UI
+            updatePendingDisplay();
+            updateTotalSaving();
+            calculateLive(); // refresh numbers
+            
+            // Show success toast
+            showToast(`Record saved for ${date}! Shortfall carry-forward updated.`);
+            
+            // Refresh other tabs if open
+            if (document.getElementById('goal-tab').classList.contains('active')) {
+                updateGoalTab();
+            }
+            if (document.getElementById('calendar-tab').classList.contains('active')) {
+                renderCalendar();
+            }
+        }
+
+        function updatePendingDisplay() {
+            document.getElementById('pending-shortfall').innerHTML = `₹${pendingShortfall}`;
+            document.getElementById('pending-shortfall').className = pendingShortfall > 0 
+                ? 'text-3xl font-bold text-red-600 mt-1' 
+                : 'text-3xl font-bold text-emerald-600 mt-1';
+        }
+
+        function updateTotalSaving() {
+            let totalSave = 0;
+            records.forEach(r => totalSave += (r.saving || 0));
+            document.getElementById('total-saving').innerHTML = `₹${totalSave}`;
+        }
+
+        function clearIncomeInput() {
+            document.getElementById('income-input').value = '';
+            calculateLive();
+        }
+
+        function updateHeaderDate() {
+            const today = new Date();
+            const options = { day: 'numeric', month: 'short' };
+            document.getElementById('header-date').innerText = today.toLocaleDateString('en-IN', options);
+        }
+
+        // ==================== GOAL TAB ====================
+        function updateGoalTab() {
+            // Calculate from records (July 2026 only)
+            const julyRecords = records.filter(r => r.date.startsWith('2026-07'));
+            
+            const earned = julyRecords.reduce((sum, r) => sum + (r.income || 0), 0);
+            const workingDaysDone = julyRecords.filter(r => r.dayType === 'Working Day').length;
+            
+            const remaining = Math.max(0, monthlyTarget - earned);
+            const daysLeft = Math.max(0, totalWorkDays - workingDaysDone);
+            
+            const suggestedDaily = daysLeft > 0 ? Math.ceil(remaining / daysLeft) : 0;
+            const progress = monthlyTarget > 0 ? Math.min(100, Math.round((earned / monthlyTarget) * 100)) : 0;
+            
+            // Update DOM
+            document.getElementById('earned-so-far').innerHTML = `₹${earned.toLocaleString('en-IN')}`;
+            document.getElementById('goal-remaining').innerHTML = `₹${remaining.toLocaleString('en-IN')}`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-percent').innerHTML = progress;
+            document.getElementById('working-days-done').innerHTML = workingDaysDone;
+            document.getElementById('total-work-days').innerHTML = totalWorkDays;
+            document.getElementById('days-left').innerHTML = daysLeft;
+            document.getElementById('days-left-big').innerHTML = daysLeft;
+            document.getElementById('today-goal-target').innerHTML = `₹${suggestedDaily}`;
+            
+            // Expected finish (simple calculation)
+            const finishDate = new Date();
+            finishDate.setDate(finishDate.getDate() + daysLeft);
+            const finishStr = finishDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            document.getElementById('expected-finish').innerHTML = finishStr;
+            
+            // Header target
+            document.getElementById('goal-target-header').innerHTML = `₹${monthlyTarget.toLocaleString('en-IN')}`;
+            
+            // Set input values
+            document.getElementById('monthly-target-input').value = monthlyTarget;
+            document.getElementById('total-work-days-input').value = totalWorkDays;
+        }
+
+        function saveGoalSettings() {
+            monthlyTarget = parseInt(document.getElementById('monthly-target-input').value) || 15000;
+            totalWorkDays = parseInt(document.getElementById('total-work-days-input').value) || 15;
+            
+            saveToLocalStorage();
+            updateGoalTab();
+            
+            showToast("Goal settings saved! Daily targets will update automatically.");
+        }
+
+        // ==================== CALENDAR ====================
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            // July 2026: 1st is Wednesday (weekday 3 if Sun=0)
+            const firstDay = 3; // Wednesday
+            const daysInMonth = 31;
+            
+            // Empty cells before 1st
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day h-14 flex items-center justify-center text-zinc-300 text-xs rounded-2xl';
+                grid.appendChild(empty);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `2026-07-${day.toString().padStart(2, '0')}`;
+                const record = records.find(r => r.date === dateStr);
+                
+                const cell = document.createElement('div');
+                cell.className = `calendar-day h-14 flex flex-col items-center justify-center text-xs rounded-2xl cursor-pointer border border-zinc-100`;
+                
+                let innerHTML = `<div class="font-semibold text-zinc-700">${day}</div>`;
+                
+                if (record) {
+                    const isMet = record.shortfall === 0 && record.income > 0;
+                    const isPartial = record.shortfall > 0 && record.income > 0;
+                    
+                    if (isMet) {
+                        cell.classList.add('green', 'has-record');
+                        innerHTML += `<div class="text-[10px] font-bold text-emerald-700">₹${record.income}</div>`;
+                        innerHTML += `<i class="fa-solid fa-check text-emerald-600 text-xs mt-0.5"></i>`;
+                    } else if (isPartial) {
+                        cell.classList.add('yellow', 'has-record');
+                        innerHTML += `<div class="text-[10px] font-bold text-amber-700">₹${record.income}</div>`;
+                    } else {
+                        cell.classList.add('red', 'has-record');
+                        innerHTML += `<div class="text-[10px] font-bold text-red-600">₹${record.income}</div>`;
+                    }
+                    
+                    cell.onclick = () => loadRecordIntoDaily(dateStr);
+                } else {
+                    cell.classList.add('bg-white', 'text-zinc-400');
+                    cell.onclick = () => loadRecordIntoDaily(dateStr);
+                }
+                
+                cell.innerHTML = innerHTML;
+                grid.appendChild(cell);
+            }
+        }
+
+        function loadRecordIntoDaily(dateStr) {
+            // Switch to daily tab
+            switchTab('daily');
+            
+            // Set date
+            document.getElementById('entry-date').value = dateStr;
+            
+            // Find if record exists
+            const record = records.find(r => r.date === dateStr);
+            
+            if (record) {
+                // Load existing data
+                document.getElementById('income-input').value = record.income;
+                document.getElementById('day-type').value = record.dayType || 'Working Day';
+                
+                // Recalculate to show current values
+                setTimeout(() => {
+                    calculateLive();
+                }, 50);
+                
+                showToast(`Loaded record for ${dateStr}. You can edit & save again.`);
+            } else {
+                // New day
+                document.getElementById('income-input').value = '';
+                document.getElementById('day-type').value = 'Working Day';
+                calculateLive();
+                showToast(`New entry for ${dateStr}. Enter income and save.`);
+            }
+        }
+
+        // ==================== DATA MANAGEMENT ====================
+        function exportBackup() {
+            const data = {
+                records: records,
+                pendingShortfall: pendingShortfall,
+                baseDailyNeed: baseDailyNeed,
+                monthlyTarget: monthlyTarget,
+                totalWorkDays: totalWorkDays,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `daily-income-backup-${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast("Backup downloaded successfully!");
+        }
+
+        function importBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        
+                        if (data.records) records = data.records;
+                        if (data.pendingShortfall !== undefined) pendingShortfall = data.pendingShortfall;
+                        if (data.baseDailyNeed) baseDailyNeed = data.baseDailyNeed;
+                        if (data.monthlyTarget) monthlyTarget = data.monthlyTarget;
+                        if (data.totalWorkDays) totalWorkDays = data.totalWorkDays;
+                        
+                        saveToLocalStorage();
+                        
+                        // Refresh everything
+                        updatePendingDisplay();
+                        updateTotalSaving();
+                        document.getElementById('base-need').value = baseDailyNeed;
+                        
+                        updateGoalTab();
+                        renderCalendar();
+                        calculateLive();
+                        
+                        showToast("Backup restored successfully!");
+                    } catch (err) {
+                        alert("Invalid backup file!");
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function clearAllData() {
+            if (!confirm("Are you sure you want to delete ALL data? This cannot be undone.")) return;
+            
+            records = [];
+            pendingShortfall = 0;
+            baseDailyNeed = 700;
+            monthlyTarget = 15000;
+            totalWorkDays = 15;
+            
+            localStorage.clear();
+            
+            // Reset UI
+            document.getElementById('base-need').value = 700;
+            document.getElementById('pending-shortfall').innerHTML = '₹0';
+            document.getElementById('total-saving').innerHTML = '₹0';
+            document.getElementById('income-input').value = '';
+            
+            updateGoalTab();
+            renderCalendar();
+            calculateLive();
+            
+            showToast("All data cleared.");
+        }
+
+        // ==================== UTILS ====================
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-sm px-5 py-3 rounded-3xl shadow-xl flex items-center gap-x-2 z-[999]`;
+            toast.style.maxWidth = '300px';
+            toast.innerHTML = `
+                <i class="fa-solid fa-check-circle text-emerald-400"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 200);
+            }, 2200);
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            loadData();
+            
+            // Set initial values
+            document.getElementById('base-need').value = baseDailyNeed;
+            document.getElementById('pending-shortfall').innerHTML = `₹${pendingShortfall}`;
+            document.getElementById('total-saving').innerHTML = `₹${records.reduce((s, r) => s + (r.saving || 0), 0)}`;
+            
+            // Set today's date
+            const todayStr = '2026-07-15';
+            document.getElementById('entry-date').value = todayStr;
+            
+            // Initial calculation
+            setTimeout(() => {
+                calculateLive();
+            }, 100);
+            
+            // Update header
+            updateHeaderDate();
+            
+            // Initial Goal & Calendar
+            updateGoalTab();
+            renderCalendar();
+            
+            // Make sure daily tab is active
+            document.getElementById('daily-tab').classList.add('active');
+            
+            // Bonus: auto calculate when date or day type changes
+            document.getElementById('entry-date').addEventListener('change', calculateLive);
+            document.getElementById('day-type').addEventListener('change', calculateLive);
+            
+            // Welcome toast on first load
+            setTimeout(() => {
+                // Only show if no previous interaction
+                if (records.length <= 2) {
+                    // showToast("Welcome! Enter income & tap Save Record. Data stays in your browser.");
+                }
+            }, 1800);
+            
+            console.log('%c[Daily Income Manager] Fully initialized and ready!', 'color:#64748b');
+        }
+        
+        // Boot app
+        window.onload = init;
+    </script>
 </body>
 </html>
